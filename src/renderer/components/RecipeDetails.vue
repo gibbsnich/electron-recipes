@@ -28,7 +28,7 @@ export default defineComponent({
             this.currentRecipe = recipes[0];
         },
         recipeData(rdata) {
-
+            this.currentRecipe = rdata;
         }
     }
 })

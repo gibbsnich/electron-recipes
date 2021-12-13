@@ -14,7 +14,7 @@ export const fetchRecipe = async (url) => {
 
     const body = await ipcRenderer.invoke('request', url);
     const $ = cheerio.load(body);
-    const title = $('h1').text();
+    const name = $('h1').text();
     const servingsField = $('input.ds-input');
     let servingsName = capitalize(servingsField.attr('name'));
     const servings = `${servingsField.attr('value')} ${servingsName}`;
@@ -24,5 +24,5 @@ export const fetchRecipe = async (url) => {
         const i = rmWhitespace($(cells[1]).text());
         return {amount: amount, ingredient: i};
     });
-    return {title, servings, ingredients};
+    return {name, servings, ingredients};
 };

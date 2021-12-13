@@ -15,19 +15,19 @@ export default defineComponent({
             recipeUrl: ""
         }
     },
+    emits: ['recipeImported'],
     methods: {
         async startImport() {
             //todo check if url was already imported (is existing in DB)
             if (!this.recipeUrl || this.recipeUrl.length === 0) {
                 this.recipeUrl = 'https://www.chefkoch.de/rezepte/4045411625126577/Curry-Blumenkohl.html';
             }
-            const ing = await fetchRecipe(this.recipeUrl);
-            console.log(ing);
+            const recipeData = await fetchRecipe(this.recipeUrl);
+            this.$emit('recipeImported', recipeData);
         }
     },
 })
 </script>
-
 
 <style scoped>
 .importUrlField { width: 100%; }

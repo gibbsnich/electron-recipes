@@ -19,7 +19,7 @@
             <button @click="addRecipe" type="button">Rezept anlegen</button>
             <button @click="importRecipe" type="button">Rezept importieren</button>
             <div v-show="showImporter">
-                <RecipeImporter />
+                <RecipeImporter @recipe-imported="recipeImported" />
             </div>
         </div>
         <div class="item-center">
@@ -62,6 +62,10 @@ export default defineComponent({
       },
       selectRecipe(rid) {
           this.recipeId = rid;
+      },
+      recipeImported(recipe) {
+          this.recipeData = recipe;
+          this.showImporter = false;
       }
   }
 });
