@@ -57,7 +57,7 @@ const store = createStore({
         },
         setEvent(state, event) {
             const recipe = state.recipes.filter((r) => r.id === event.recipeId)[0];
-            if (recipe.length === 0)
+            if (!recipe || recipe.length === 0)
                 return;
             
             if (event.extendedProps.recur) {
