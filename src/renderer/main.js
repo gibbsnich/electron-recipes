@@ -39,14 +39,22 @@ const store = createStore({
                 startRecur: '1970-01-01'
             }],
             recipes: [ //todo get from DB
+                /*
                 {name: 'Rezept 1', id: 1},
                 {name: 'Rezept 2', id: 2},
                 {name: 'Rezept 3', id: 3},
-                {name: 'Rezept 4', id: 4},
+                {name: 'Rezept 4', id: 4},*/
             ]
         }
     },
     mutations: {
+        storeRecipe(state, recipe) {
+            if (!recipe.id) {
+                const nextId = state.recipes.reduce((r, s) => r.id > s ? r.id : s, 0) + 1;
+                recipe.id = nextId;
+            }
+            state.recipes.push(recipe);
+        },
         setEvent(state, event) {
             const recipe = state.recipes.filter((r) => r.id === event.recipeId)[0];
             if (recipe.length === 0)
