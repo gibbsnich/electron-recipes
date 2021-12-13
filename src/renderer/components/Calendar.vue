@@ -23,9 +23,17 @@ export default defineComponent({
                 plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
                 initialView: 'timeGridWeek',
                 headerToolbar: {
-                    left: 'prev,next today',
+                    left: 'prev,next today gotoRecipesButton',
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                customButtons: {
+                    gotoRecipesButton: {
+                        text: 'Rezepte',
+                        click: () => {
+                            this.$router.push('/recipes');
+                        }
+                    }
                 },
                 events: this.$store.state.events,
                 eventClick: this.handleEventClick,

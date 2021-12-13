@@ -1,7 +1,10 @@
 import { createApp } from 'vue'
 import { createStore } from 'vuex';
+import { createRouter, createWebHashHistory } from 'vue-router';
 
-import App from './App.vue'
+import App from './App.vue';
+import Home from './Home.vue';
+import Recipes from './Recipes.vue';
 
 function padZero(d) {
     return (d < 10) ? `0${d}` : d;
@@ -73,7 +76,18 @@ const store = createStore({
     },
 });
 
+const routes = [
+    { path: '/', component: Home },
+    { path: '/recipes', component: Recipes },
+];
+
+const router = createRouter({
+    history: createWebHashHistory(),
+    routes,
+});
+
 const app = createApp(App);
 app.use(store);
+app.use(router);
 
 app.mount('#app');

@@ -1,20 +1,18 @@
 <template>
   <div id="app">
     <container />
-    <Calendar />
+    <router-view />
   </div>
 </template>
 
 <script>
 import { defineComponent } from 'vue';
-import Calendar from './components/Calendar.vue'
-import { ipcRenderer } from '@/electron';
+//import { ipcRenderer } from '@/electron';
 import { container } from 'jenesius-vue-modal';
 
 export default defineComponent({
   name: 'app',
   components: {
-    Calendar,
     container,
   },
   setup() {

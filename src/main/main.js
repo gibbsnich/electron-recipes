@@ -1,5 +1,6 @@
-const {app, BrowserWindow, ipcMain} = require('electron')
-const Path = require('path')
+const {app, BrowserWindow, ipcMain} = require('electron');
+const Path = require('path');
+const axios = require('axios');
 
 function createWindow () {
   const mainWindow = new BrowserWindow({
@@ -16,8 +17,7 @@ function createWindow () {
     const rendererPort = process.argv[2];
     mainWindow.loadURL(`http://localhost:${rendererPort}`);
     mainWindow.webContents.openDevTools()
-  }
-  else {
+  } else {
     mainWindow.loadFile(Path.join(app.getAppPath(), 'renderer', 'index.html'));
   }
 }
@@ -41,3 +41,8 @@ app.on('window-all-closed', function () {
 ipcMain.on('message', (event, message) => {
   console.log(message);
 })
+
+ipcMain.handle('request', async (event, url) => {
+  const result = await axios.get(url);
+  return result.data;
+});
