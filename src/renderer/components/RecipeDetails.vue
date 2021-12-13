@@ -7,13 +7,15 @@
     </div>
 
     <h3>Zutaten:</h3>
-    <div v-for="ingredient in currentRecipe.ingredients" v-bind:key="ingredient">
+    <div v-for="(ingredient, index) in currentRecipe.ingredients" v-bind:key="index">
         <input type="text" v-model="ingredient.amount" />
         <input type="text" v-model="ingredient.ingredient" />
+        <button type="button" @click="deleteIngredient(index)">[X]</button>
     </div>
     <div>
         <input type="text" v-model="newIngredient.amount" />
         <input type="text" v-model="newIngredient.ingredient" />
+        <button type="button" @click="addIngredient()">[N]</button>
     </div>
     
     <h3>Zubereitung:</h3>
@@ -36,7 +38,7 @@ export default defineComponent({
     data() {
       return {
           currentRecipe: this.makeEmptyRecipe(),
-          newIngredient: {amount: '', ingredient: ''},
+          newIngredient: this.makeEmptyIngredient(),
       }
     },
     watch: {
@@ -52,9 +54,20 @@ export default defineComponent({
         }
     },
     methods: {
+        addIngredient() {
+            this.currentRecipe.ingredients.push(this.newIngredient);
+            this.newIngredient = this.makeEmptyIngredient();
+        },
+        deleteIngredient(index) {
+            this.currentRecipe.ingredients.splice(index, 1);
+        },
         saveRecipe() {
+            this.currentRecipe.ingredients = this.currentRecipe.ingredients.filter((i) => i.amount !== '' && i.ingredient !== '');
             this.$store.commit('storeRecipe', this.currentRecipe);
             this.currentRecipe = this.makeEmptyRecipe();
+        },
+        makeEmptyIngredient() {
+            return {amount: '', ingredient: ''};
         },
         makeEmptyRecipe() {
             return {name: '', serving: {value: '', type: ''}, ingredients: [], preparation: '', url: ''};

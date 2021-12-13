@@ -20,16 +20,15 @@ export const fetchRecipe = async (url) => {
         type: capitalize(servingsField.attr('name')),
         value: servingsField.attr('value')
     };
-    const ingredients = $('table.ingredients tr').map((idx, ing) => {
+    const ingredients = [];
+    $('table.ingredients tr').each((idx, ing) => {
         const cells = $(ing).children('td');
         const amount = rmWhitespace($(cells[0]).text());
         const i = rmWhitespace($(cells[1]).text());
-        return {amount: amount, ingredient: i};
+        ingredients.push({amount: amount, ingredient: i});
     });
     const articles = $('article');
-    const prepArticle = articles.filter((idx, a) => 
-        a.attribs['class'].indexOf('recipe') === -1
-        );
+    const prepArticle = articles.filter((idx, a) => a.attribs['class'].indexOf('recipe') === -1);
     let preparation = '';
     if (prepArticle.length === 0) {
         console.warn('Cannot extract preparation instructions.')

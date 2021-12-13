@@ -30,6 +30,7 @@ export default defineComponent({
             }
             const recipeData = await fetchRecipe(this.recipeUrl);
             this.$emit('recipeImported', recipeData);
+            this.recipeUrl = '';
         }
     },
 })
