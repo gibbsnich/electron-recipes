@@ -6,18 +6,7 @@ import { ipcRenderer } from '@/electron';
 import App from './App.vue';
 import Home from './Home.vue';
 import Recipes from './Recipes.vue';
-
-function padZero(d) {
-    return (d < 10) ? `0${d}` : d;
-}
-
-function dateToString(d) {
-    return `${d.getYear()+1900}-${padZero(d.getMonth()+1)}-${padZero(d.getDate())}`
-}
-
-function dateToTimeString(d) {
-    return `${dateToString(d)}T${padZero(d.getHours())}:${padZero(d.getMinutes())}`;
-}
+import { dateToString, dateToTimeString } from './util/date.js';
 
 const store = createStore({
     state () {

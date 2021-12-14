@@ -34,6 +34,7 @@
     "cheerio": "^1.0.0-rc.10",
     "htmlparser": "^1.7.7",
     "jenesius-vue-modal": "^1.4.7",
+    "jspdf": "^2.4.0",
     "vue": "^3.0.6",
     "vue-router": "^4.0.12",
     "vuex": "^4.0.2"
