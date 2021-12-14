@@ -7,7 +7,6 @@
 
 <script>
 import { defineComponent } from 'vue';
-//import { ipcRenderer } from '@/electron';
 import { container } from 'jenesius-vue-modal';
 
 export default defineComponent({
@@ -15,9 +14,9 @@ export default defineComponent({
   components: {
     container,
   },
-  setup() {
-    //ipcRenderer.send('message', 'Hello from App.vue!');
-  },
+  beforeMount() {
+    this.$store.dispatch('loadInitialData');
+  }
 });
 </script>
 

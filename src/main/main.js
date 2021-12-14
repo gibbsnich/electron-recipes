@@ -1,6 +1,7 @@
 const {app, BrowserWindow, ipcMain} = require('electron');
 const Path = require('path');
 const axios = require('axios');
+const fs = require('fs');
 
 function createWindow () {
   const mainWindow = new BrowserWindow({
@@ -45,4 +46,35 @@ ipcMain.on('message', (event, message) => {
 ipcMain.handle('request', async (event, url) => {
   const result = await axios.get(url);
   return result.data;
+});
+
+function getDataPath(fileName) {
+  if (fileName) {
+    return Path.join(app.getAppPath(), 'data', `${fileName}.json`);
+  } 
+  return Path.join(app.getAppPath(), 'data');
+}
+
+ipcMain.handle('readJSON', async (event, fileName) => {
+  const dirPath = getDataPath(null);
+  const dirExists = fs.existsSync(dirPath);
+  if (!dirExists) {
+    const mkdirErr = await fs.promises.mkdir(dirPath);
+    if (mkdirErr) {
+      console.warn(mkdirErr);
+      return;
+    }
+  }
+  const path = getDataPath(fileName);
+  const exists = fs.existsSync(path);
+  if (exists) {
+    const data = await fs.promises.readFile(path, {encoding: 'UTF-8'});
+    return JSON.parse(data);
+  } else {
+    return [];
+  }
+});
+
+ipcMain.handle('writeJSON', async (event, data) => {
+  await fs.promises.writeFile(getDataPath(data.fileName), data.data);
 });

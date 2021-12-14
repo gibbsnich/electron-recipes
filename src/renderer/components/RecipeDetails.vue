@@ -63,7 +63,7 @@ export default defineComponent({
         },
         saveRecipe() {
             this.currentRecipe.ingredients = this.currentRecipe.ingredients.filter((i) => i.amount !== '' && i.ingredient !== '');
-            this.$store.commit('storeRecipe', this.currentRecipe);
+            this.$store.dispatch('storeRecipe', this.currentRecipe);
             this.currentRecipe = this.makeEmptyRecipe();
         },
         makeEmptyIngredient() {

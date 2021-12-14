@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createStore } from 'vuex';
 import { createRouter, createWebHashHistory } from 'vue-router';
+import { ipcRenderer } from '@/electron';
 
 import App from './App.vue';
 import Home from './Home.vue';
@@ -38,16 +39,16 @@ const store = createStore({
                 allDay: true,
                 startRecur: '1970-01-01'
             }],
-            recipes: [ //todo get from DB
-                /*
-                {name: 'Rezept 1', id: 1},
-                {name: 'Rezept 2', id: 2},
-                {name: 'Rezept 3', id: 3},
-                {name: 'Rezept 4', id: 4},*/
-            ]
+            recipes: null
         }
     },
     mutations: {
+        initStore(state, data) {
+            state.recipes = data.recipes;
+            if (data.events.length > 0) {
+                state.events = data.events;
+            }
+        },
         storeRecipe(state, recipe) {
             if (!recipe.id) {
                 const nextId = state.recipes.reduce((r, s) => r.id > s ? r.id : s, 0) + 1;
@@ -82,6 +83,21 @@ const store = createStore({
             }
         }
     },
+    actions: {
+        async loadInitialData({ commit }) {
+            const recipeData = await ipcRenderer.invoke('readJSON', 'recipes');
+            const eventData = await ipcRenderer.invoke('readJSON', 'events');
+            commit('initStore', {recipes: recipeData, events: eventData});
+        },
+        async storeEvent({ commit, state }, event) {
+            commit('setEvent', event);
+            await ipcRenderer.invoke('writeJSON', {fileName: 'events', data: JSON.stringify(state.events)});
+        },
+        async storeRecipe({ commit, state }, recipe) {
+            commit('storeRecipe', recipe);
+            await ipcRenderer.invoke('writeJSON', {fileName: 'recipes', data: JSON.stringify(state.recipes)});
+        }
+    }
 });
 
 const routes = [

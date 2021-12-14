@@ -1,6 +1,6 @@
 
 <template>
-    <FullCalendar :options="calendarOptions" />
+    <FullCalendar :options="{...calendarOptions, events: this.$store.state.events}"  />
 </template>
 
 <script>
@@ -35,13 +35,7 @@ export default defineComponent({
                         }
                     }
                 },
-                events: this.$store.state.events,
                 eventClick: this.handleEventClick,
-                /* you can update a remote database when these fire:
-                eventAdd:
-                eventChange:
-                eventRemove:
-                */
                 editable: true,
                 selectable: true
             },

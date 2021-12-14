@@ -62,8 +62,10 @@ async function start() {
 
     startElectron();
 
-    Chokidar.watch(Path.join(__dirname, '..', 'src', 'main')).on('change', () => {
-        restartElectron();
+    Chokidar.watch(Path.join(__dirname, '..', 'src', 'main')).on('change', (path, stats) => {
+        if (path.indexOf('/data/') !== -1) {
+            restartElectron();
+        }
     })
 }
 

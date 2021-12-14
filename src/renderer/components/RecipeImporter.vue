@@ -18,15 +18,15 @@ export default defineComponent({
     emits: ['recipeImported'],
     methods: {
         async startImport() {
+            if (!this.recipeUrl || this.recipeUrl.length === 0) {
+                this.recipeUrl = 'https://www.chefkoch.de/rezepte/4045411625126577/Curry-Blumenkohl.html';
+            }
+
             const existingRecipes = this.$store.state.recipes.filter((r) => r.url === this.recipeUrl);
             if (existingRecipes.length > 0) {
                 //todo show user
                 console.warn('Already imported.');
                 return;
-            }
-
-            if (!this.recipeUrl || this.recipeUrl.length === 0) {
-                this.recipeUrl = 'https://www.chefkoch.de/rezepte/4045411625126577/Curry-Blumenkohl.html';
             }
             const recipeData = await fetchRecipe(this.recipeUrl);
             this.$emit('recipeImported', recipeData);
