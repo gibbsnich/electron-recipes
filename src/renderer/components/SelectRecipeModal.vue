@@ -15,8 +15,9 @@ import { defineComponent } from 'vue';
 import { closeModal } from 'jenesius-vue-modal';
 
 export default defineComponent({
+    name: 'SelectRecipeModal',
     props: {
-        evt: Object,
+        event: Object,
     },
     data() {
         return {
@@ -29,8 +30,8 @@ export default defineComponent({
         },
         close() {
             closeModal()
-            this.evt.recipeId = this.selectedChoice;
-            this.$store.dispatch('storeEvent', this.evt);
+            this.event.recipeId = this.selectedChoice;
+            this.$store.dispatch('storeEvent', this.event);
         }
     }
 })

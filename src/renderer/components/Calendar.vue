@@ -13,6 +13,8 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { openModal } from 'jenesius-vue-modal';
 import SelectRecipeModal from './SelectRecipeModal.vue';
+import RandomIngredientsModal from './RandomIngredientsModal.vue';
+import { dateToString } from '../util/date.js';
 import { generatePDF } from '../util/generatePDF.js';
 
 export default defineComponent({
@@ -25,6 +27,7 @@ export default defineComponent({
             calendarOptions: {
                 plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
                 locale: deLocale,
+                //slotDuration: "02:00:00",
                 initialView: 'timeGridWeek',
                 headerToolbar: {
                     left: 'prev,next today gotoRecipesButton generatePDFButton',
@@ -51,16 +54,24 @@ export default defineComponent({
                 editable: true,
                 selectable: true,
                 select: this.handleSelect,
+                dateClick: this.handleDateClick,
             },
         }
     },
     methods: {
         async handleEventClick(info) {
-            await openModal(SelectRecipeModal, {evt: info.event});
+            if (info.event.extendedProps.extra) {
+                await openModal(RandomIngredientsModal, {date: dateToString(info.event.start)});
+            } else {
+                await openModal(SelectRecipeModal, {event: info.event});
+            }
         },
         handleSelect(info) {
             this.currentSelection = {start: info.start, end: info.end};
         },
+        async handleDateClick(info) {
+            await openModal(RandomIngredientsModal, {date: dateToString(info.date)});
+        }
     }
 });
 </script>

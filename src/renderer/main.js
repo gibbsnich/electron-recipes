@@ -28,7 +28,7 @@ const store = createStore({
                 allDay: true,
                 startRecur: '1970-01-01'
             }],
-            recipes: null
+            recipes: null,
         }
     },
     mutations: {
@@ -46,26 +46,36 @@ const store = createStore({
             }
         },
         setEvent(state, event) {
-            const recipe = state.recipes.filter((r) => r.id === event.recipeId)[0];
-            if (!recipe || recipe.length === 0)
-                return;
-            let eventDate = dateToString(event.start), eventStart, eventEnd;
-            if (event.extendedProps.recur) {    
-                if (event.title === "Mittagessen") {
-                    eventStart = `${eventDate}T12:00`;
-                    eventEnd = `${eventDate}T13:00`;
+            if (event.extendedProps.extra) {
+                const ingredientsEvent = state.events
+                    .filter((e) => e.extendedProps.extra && e.start === event.start);
+                if (ingredientsEvent.length === 1) {
+                    ingredientsEvent[0].ingredients = event.ingredients;
                 } else {
-                    eventStart = `${eventDate}T18:00`;
-                    eventEnd = `${eventDate}T19:00`;
+                    state.events.push(event);
                 }
-            }
-            const startISO = eventStart ? eventStart : dateToTimeString(event.start);
-            const selEvent = state.events.filter((evt) => evt.start === startISO);
-            if (selEvent.length === 0) {
-                state.events.push({title: recipe.name, start: eventStart, end: eventEnd, color: 'red', extendedProps: {recipeId: recipe.id}});
             } else {
-                selEvent[0].title = recipe.name;
-                selEvent[0].extendedProps.recipeId = recipe.id;
+                const recipe = state.recipes.filter((r) => r.id === event.recipeId)[0];
+                if (!recipe || recipe.length === 0)
+                    return;
+                let eventDate = dateToString(event.start), eventStart, eventEnd;
+                if (event.extendedProps.recur) {    
+                    if (event.title === "Mittagessen") {
+                        eventStart = `${eventDate}T12:00`;
+                        eventEnd = `${eventDate}T13:00`;
+                    } else {
+                        eventStart = `${eventDate}T18:00`;
+                        eventEnd = `${eventDate}T19:00`;
+                    }
+                }
+                const startISO = eventStart ? eventStart : dateToTimeString(event.start);
+                const selEvent = state.events.filter((evt) => evt.start === startISO);
+                if (selEvent.length === 0) {
+                    state.events.push({title: recipe.name, start: eventStart, end: eventEnd, color: 'red', extendedProps: {recipeId: recipe.id}});
+                } else {
+                    selEvent[0].title = recipe.name;
+                    selEvent[0].extendedProps.recipeId = recipe.id;
+                }
             }
         }
     },
