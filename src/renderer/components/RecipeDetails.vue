@@ -66,9 +66,13 @@ export default defineComponent({
             this.currentRecipe.ingredients.splice(index, 1);
         },
         saveRecipe() {
-            this.currentRecipe.ingredients = this.currentRecipe.ingredients.filter((i) => i.amount !== '' && i.ingredient !== '');
+            this.currentRecipe.ingredients = this.currentRecipe.ingredients.filter((i) => i.amount !== '' || i.ingredient !== '');
+            if (this.newIngredient.amount !== '' || this.newIngredient.ingredient !== '') {
+                this.currentRecipe.ingredients.push(this.newIngredient);
+            }
             this.$store.dispatch('storeRecipe', this.currentRecipe);
             this.currentRecipe = this.makeEmptyRecipe();
+            this.newIngredient = this.makeEmptyIngredient();
         },
         makeEmptyIngredient() {
             return {amount: '', ingredient: ''};

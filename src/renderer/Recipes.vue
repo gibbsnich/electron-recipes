@@ -17,6 +17,7 @@
                 </li>
             </ul>
             <button @click="addRecipe" type="button">Rezept anlegen</button>
+            <br/>
             <button @click="importRecipe" type="button">Rezept importieren</button>
             <div v-show="showImporter">
                 <RecipeImporter @recipe-imported="recipeImported" />
