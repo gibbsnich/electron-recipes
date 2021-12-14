@@ -6,6 +6,7 @@
 <script>
 import { defineComponent } from 'vue';
 import '@fullcalendar/core/vdom'; // solves problem with Vite
+import deLocale from '@fullcalendar/core/locales/de';
 import FullCalendar from '@fullcalendar/vue3';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -23,11 +24,12 @@ export default defineComponent({
             currentSelection: null,
             calendarOptions: {
                 plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+                locale: deLocale,
                 initialView: 'timeGridWeek',
                 headerToolbar: {
                     left: 'prev,next today gotoRecipesButton generatePDFButton',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    right: 'dayGridMonth,timeGridWeek'
                 },
                 customButtons: {
                     gotoRecipesButton: {
