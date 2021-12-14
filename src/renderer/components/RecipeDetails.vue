@@ -3,7 +3,7 @@
         <h4>Name:</h4><input type="text" v-model="currentRecipe.name" />    
     </div>
     <div>
-        <h4>Genung für:</h4><input type="text" v-model="currentRecipe.serving.value" /><input type="text" v-model="currentRecipe.serving.type" />
+        <h4>Genug für:</h4><input type="text" v-model="currentRecipe.serving.value" /><input type="text" v-model="currentRecipe.serving.type" />
     </div>
 
     <h3>Zutaten:</h3>
@@ -43,6 +43,8 @@ export default defineComponent({
     },
     watch: {
         recipeId(rid) {
+            if (!rid)
+                return;
             const recipes = this.$store.state.recipes.filter((recipe) => recipe.id === rid);
             if (recipes.length === 0 || recipes.length > 1) {
                 return console.warn("Couldn't select recipe.")
@@ -50,6 +52,8 @@ export default defineComponent({
             this.currentRecipe = recipes[0];
         },
         recipeData(rdata) {
+            if (!rdata)
+                return;
             this.currentRecipe = rdata;
         }
     },

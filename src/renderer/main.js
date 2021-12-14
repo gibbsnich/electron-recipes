@@ -42,8 +42,8 @@ const store = createStore({
             if (!recipe.id) {
                 const nextId = state.recipes.reduce((s, r) => r.id > s ? r.id : s, 0) + 1;
                 recipe.id = nextId;
+                state.recipes.push(recipe);
             }
-            state.recipes.push(recipe);
         },
         setEvent(state, event) {
             const recipe = state.recipes.filter((r) => r.id === event.recipeId)[0];

@@ -26,10 +26,11 @@ export default defineComponent({
             if (existingRecipes.length > 0) {
                 //todo show user
                 console.warn('Already imported.');
-                return;
+                this.$emit('recipeImported', existingRecipes[0]);
+            } else {
+                const recipeData = await fetchRecipe(this.recipeUrl);
+                this.$emit('recipeImported', recipeData);
             }
-            const recipeData = await fetchRecipe(this.recipeUrl);
-            this.$emit('recipeImported', recipeData);
             this.recipeUrl = '';
         }
     },

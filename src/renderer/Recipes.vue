@@ -61,9 +61,11 @@ export default defineComponent({
           this.showImporter = !this.showImporter;
       },
       selectRecipe(rid) {
+          this.recipeData = null;
           this.recipeId = rid;
       },
       recipeImported(recipe) {
+          this.recipeId = null;
           this.recipeData = recipe;
           this.showImporter = false;
       }
