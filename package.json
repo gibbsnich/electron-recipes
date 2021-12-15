@@ -1,7 +1,7 @@
 {
-  "name": "electron-vue-template",
-  "version": "0.1.0",
-  "description": "A minimal Electron + Vue application",
+  "name": "electron-recipes",
+  "version": "0.0.1",
+  "description": "Manage your cooking recipes with this electron app.",
   "main": "src/main/main.js",
   "scripts": {
     "dev": "node scripts/dev-server.js",
@@ -10,10 +10,10 @@
     "build:mac": "node scripts/build-vue.js && electron-builder -c config/electron-builder.json --mac",
     "build:linux": "node scripts/build-vue.js && electron-builder -c config/electron-builder.json --linux"
   },
-  "repository": "https://github.com/deluze/electron-vue-template",
+  "repository": "https://github.com/gibbsnich/electron-recipes",
   "author": {
-    "name": "Deluze",
-    "url": "https://github.com/Deluze"
+    "name": "gibbsnich",
+    "url": "https://github.com/gibbsnich"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.0.0",
