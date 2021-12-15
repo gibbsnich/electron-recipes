@@ -1,7 +1,7 @@
 # Electron-Recipes
 
-An Electron/VueJS 3 based app to manage cooking recipes and lists of ingredients to buy.
-
+An Electron/VueJS 3 based app to manage cooking recipes and lists of ingredients to buy.  
+It is based on https://github.com/Deluze/electron-vue-template.  
 ## Get Started
 
 To start developing this Electron application execute the following commands:
