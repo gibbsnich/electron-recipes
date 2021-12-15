@@ -45,14 +45,16 @@ export default defineComponent({
         close() {
             closeModal();
             this.ingredients.push(this.newIngredient);
-            const nonEmptyIngredients = this.ingredients.filter((i) => i.amount !== '' || i.ingredient !== '')
-            this.$store.dispatch('storeEvent', {
-                title: 'Zutaten',
-                color: 'black',
-                start: this.date + "T14:00", 
-                end: this.date + "T15:00",
-                extendedProps: {extra: true, ingredients: nonEmptyIngredients},
-            });
+            const nonEmptyIngredients = this.ingredients.filter((i) => i.amount !== '' || i.ingredient !== '');
+            if (nonEmptyIngredients.length > 0) {
+                this.$store.dispatch('storeEvent', {
+                    title: 'Zutaten',
+                    color: 'black',
+                    start: this.date + "T14:00",
+                    end: this.date + "T15:00",
+                    extendedProps: {extra: true, ingredients: nonEmptyIngredients},
+                });
+            }
         },
         makeEmptyIngredient() {
             return {amount: '', ingredient: ''};
