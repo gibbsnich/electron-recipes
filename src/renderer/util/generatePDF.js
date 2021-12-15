@@ -1,6 +1,8 @@
 import { dateToString, dateStringToReadableString } from './date.js';
 import { toRaw } from 'vue';
-import jsPDF from 'jspdf'
+import jsPDF from 'jspdf';
+
+const MAX_PAGE_Y = 290;
 
 export const generatePDF = ({start, end}, store) => {
     const doc = new jsPDF();
@@ -17,36 +19,65 @@ export const generatePDF = ({start, end}, store) => {
     extraEvents.forEach((i) => i.forEach((ii) => allIngredientsPerRecipe.push(ii)));
     const allIngredients = allIngredientsPerRecipe.reduce((memo, i) => {
         if (memo[i.ingredient]) {
-            memo[i.ingredient] = memo[i.ingredient] + ' ' + i.amount;
+            memo[i.ingredient] = `${memo[i.ingredient]} + ${i.amount}`;
         } else {
             memo[i.ingredient] = i.amount;
         }
         return memo;
     }, {});
 
+    doc.setFontSize('14');
     doc.text('Einkaufsliste', 20, 10);
+    doc.setFontSize('12');
     const ingredientKeys = Object.keys(allIngredients).sort((a, b) => a < b ? -1 : (b < a ? 1 : 0));
+    let y = 20;
     ingredientKeys.forEach((i, idx) => {
-        doc.text(allIngredients[i] + ' ' + i, 10, 30 + (idx*10));
+        if (y > MAX_PAGE_Y) {
+            y = 10;
+            doc.addPage();
+        }
+        doc.text(`${allIngredients[i]} ${i}`, 10, y);
+        y += 8;
     });
-
-    doc.addPage();
 
     currentEvents.sort((a, b) => a.start < b.start ? -1 : (b.start < a.start ? 1 : 0)).forEach((e) => {
         const readableDate = dateStringToReadableString(e.start);
-        const time = e.start.indexOf("T12:") !== -1 ? "Mittagessen" : "Abendessen";
+        const time = e.start.indexOf('T12:') !== -1 ? 'Mittagessen' : 'Abendessen';
         const currentRecipe = store.state.recipes.filter((r) => r.id === e.extendedProps.recipeId)[0];
         if (currentRecipe) {
-            doc.text(readableDate + ' ' + time, 20, 10);
-            doc.text(currentRecipe.name, 30, 10);
-            doc.text(currentRecipe.serving.value + ' ' + currentRecipe.serving.type, 40, 20);
-            doc.text('Zutaten:', 20, 30);
-            currentRecipe.ingredients.forEach((i, idx) => doc.text(i.amount + ' ' + i.ingredient, 50, 40 + (idx*10)));
-            doc.text(currentRecipe.url, 30, 60 + (currentRecipe.ingredients.length*10));
-            doc.text(currentRecipe.preparation, 30, 70 + (currentRecipe.ingredients.length*10));
             doc.addPage();
+            doc.setFontSize('14');
+            doc.text(readableDate + ' ' + time, 40, 10);
+            doc.text(`${currentRecipe.name} (${currentRecipe.serving.value} ${currentRecipe.serving.type})`, 10, 20);
+            doc.setFontSize('11');
+            doc.text(currentRecipe.url, 10, 30);
+            doc.setFontSize('14');
+            doc.text('Zutaten:', 10, 40);
+            let y = 48;
+            currentRecipe.ingredients.forEach((i, idx) => {
+                if (y > MAX_PAGE_Y) {
+                    y = 10;
+                    doc.addPage();
+                }
+                doc.text(i.amount + ' ' + i.ingredient, 15, y);
+                y += 8;
+            });
+            y += 2;
+            doc.setFontSize('14');
+            doc.text('Zubereitung:', 10, y);
+            y += 8;
+            doc.setFontSize('12');
+            const prepArr = doc.splitTextToSize(currentRecipe.preparation, 190);
+            prepArr.forEach((pa) => {
+                if (y > MAX_PAGE_Y) {
+                    y = 10;
+                    doc.addPage();
+                }
+                doc.text(pa, 10, y);
+                y += 8;
+            });
+            
         }
     });
-
-    doc.save('Rezepte.pdf'); //todo add date to name
+    doc.save(`Rezepte_${startStr}.pdf`);
 };
