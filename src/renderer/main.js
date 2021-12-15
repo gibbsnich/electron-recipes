@@ -50,7 +50,7 @@ const store = createStore({
                 const ingredientsEvent = state.events
                     .filter((e) => e.extendedProps.extra && e.start === event.start);
                 if (ingredientsEvent.length === 1) {
-                    ingredientsEvent[0].ingredients = event.ingredients;
+                    ingredientsEvent[0].extendedProps.ingredients = event.extendedProps.ingredients;
                 } else {
                     state.events.push(event);
                 }

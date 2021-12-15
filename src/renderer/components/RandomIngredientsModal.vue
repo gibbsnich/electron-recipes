@@ -44,15 +44,14 @@ export default defineComponent({
         },
         close() {
             closeModal();
-            if (this.newIngredient.amount !== '' || this.newIngredient.ingredient !== '') {
-                this.ingredients.push(this.newIngredient);
-            }
+            this.ingredients.push(this.newIngredient);
+            const nonEmptyIngredients = this.ingredients.filter((i) => i.amount !== '' || i.ingredient !== '')
             this.$store.dispatch('storeEvent', {
                 title: 'Zutaten',
                 color: 'black',
                 start: this.date + "T14:00", 
                 end: this.date + "T15:00",
-                extendedProps: {extra: true, ingredients: this.ingredients},
+                extendedProps: {extra: true, ingredients: nonEmptyIngredients},
             });
         },
         makeEmptyIngredient() {
