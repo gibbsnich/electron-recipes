@@ -50,8 +50,8 @@ export default defineComponent({
                 this.$store.dispatch('storeEvent', {
                     title: 'Zutaten',
                     color: 'black',
-                    start: this.date + "T14:00",
-                    end: this.date + "T15:00",
+                    start: `${this.date}T14:00`,
+                    end: `${this.date}T15:00`,
                     extendedProps: {extra: true, ingredients: nonEmptyIngredients},
                 });
             }

@@ -6,7 +6,8 @@ import { ipcRenderer } from '@/electron';
 import App from './App.vue';
 import Home from './Home.vue';
 import Recipes from './Recipes.vue';
-import { dateToString, dateToTimeString } from './util/date.js';
+import { dateToTimeString } from './util/date.js';
+import { recurEventToEvent } from './util/event';
 
 const store = createStore({
     state () {
@@ -47,8 +48,7 @@ const store = createStore({
         },
         setEvent(state, event) {
             if (event.extendedProps.extra) {
-                const ingredientsEvent = state.events
-                    .filter((e) => e.extendedProps.extra && e.start === event.start);
+                const ingredientsEvent = state.events.filter((e) => e.extendedProps.extra && e.start === event.start);
                 if (ingredientsEvent.length === 1) {
                     ingredientsEvent[0].extendedProps.ingredients = event.extendedProps.ingredients;
                 } else {
@@ -58,16 +58,8 @@ const store = createStore({
                 const recipe = state.recipes.filter((r) => r.id === event.recipeId)[0];
                 if (!recipe || recipe.length === 0)
                     return;
-                let eventDate = dateToString(event.start), eventStart, eventEnd;
-                if (event.extendedProps.recur) {    
-                    if (event.title === "Mittagessen") {
-                        eventStart = `${eventDate}T12:00`;
-                        eventEnd = `${eventDate}T13:00`;
-                    } else {
-                        eventStart = `${eventDate}T18:00`;
-                        eventEnd = `${eventDate}T19:00`;
-                    }
-                }
+                const { eventStart, eventEnd } = event.extendedProps.recur ? 
+                    recurEventToEvent(event) : [null, null];
                 const startISO = eventStart ? eventStart : dateToTimeString(event.start);
                 const selEvent = state.events.filter((evt) => evt.start === startISO);
                 if (selEvent.length === 0) {

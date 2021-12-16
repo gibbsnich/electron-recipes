@@ -13,6 +13,7 @@
 <script>
 import { defineComponent } from 'vue';
 import { closeModal } from 'jenesius-vue-modal';
+import { recurEventToEvent } from '../util/event';
 
 export default defineComponent({
     name: 'SelectRecipeModal',
@@ -22,6 +23,17 @@ export default defineComponent({
     data() {
         return {
             selectedChoice: null,
+        }
+    },
+    mounted() {
+        if (this.event.extendedProps.recur) {
+            const { eventStart } = recurEventToEvent(this.event);
+            const selEvent = this.$store.state.events.filter((evt) => evt.start === eventStart);
+            if (selEvent.length > 0) {
+                this.selectedChoice = selEvent[0].extendedProps.recipeId;
+            }
+        } else {
+            this.selectedChoice = this.event.extendedProps.recipeId;
         }
     },
     methods: {
