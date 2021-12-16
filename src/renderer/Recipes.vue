@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="item-center">
-            <RecipeDetails :recipeId=recipeId :recipeData=recipeData />
+            <RecipeDetails :recipeId=recipeId :recipeData=recipeData :clearRecipe=clearRecipe />
         </div>
     </div>
 </div>
@@ -47,6 +47,7 @@ export default defineComponent({
           recipeId: null,
           recipeData: null,
           showImporter: false,
+          clearRecipe: false,
       }
   },
   methods: {
@@ -54,6 +55,7 @@ export default defineComponent({
           this.$router.push('/');
       },
       addRecipe() {
+          this.clearRecipe = true;
           this.recipeId = null;
           this.recipeData = null;
           this.showImporter = false;
@@ -62,10 +64,12 @@ export default defineComponent({
           this.showImporter = !this.showImporter;
       },
       selectRecipe(rid) {
+          this.clearRecipe = false;
           this.recipeData = null;
           this.recipeId = rid;
       },
       recipeImported(recipe) {
+          this.clearRecipe = false;
           this.recipeId = null;
           this.recipeData = recipe;
           this.showImporter = false;

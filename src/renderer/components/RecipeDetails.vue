@@ -34,6 +34,7 @@ export default defineComponent({
     props: {
         recipeId: Number, 
         recipeData: Object,
+        clearRecipe: Boolean,
     },
     data() {
       return {
@@ -55,7 +56,12 @@ export default defineComponent({
             if (!rdata)
                 return;
             this.currentRecipe = rdata;
-        }
+        },
+        clearRecipe(flag) {
+            if (flag) {
+                this.currentRecipe = this.makeEmptyRecipe();
+            }
+        },
     },
     methods: {
         addIngredient() {
