@@ -30,6 +30,21 @@ const store = createStore({
                 startRecur: '1970-01-01'
             }],
             recipes: null,
+            recipeCategories: [],
+            ingredientCategories: [
+                {name: 'Gemüse', id: 1},
+                {name: 'Obst', id: 2},
+                {name: 'Gekühlt', id: 3},
+                {name: 'Getränke', id: 4},
+            ],
+            ingredients: [
+                {name: 'Karotten', id: 1, categoryId: 1},
+                {name: 'Kartoffeln', id: 2, categoryId: 1},
+                {name: 'Äpfel', id: 3, categoryId: 2},
+                {name: 'Bananen', id: 4, categoryId: 2},
+                {name: 'Mango', id: 5, categoryId: 2},
+                {name: 'Trauben', id: 6, categoryId: 2},
+            ],
         }
     },
     mutations: {
