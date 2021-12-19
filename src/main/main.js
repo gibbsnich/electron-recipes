@@ -17,7 +17,7 @@ function createWindow () {
   if (process.env.NODE_ENV === 'development') {
     const rendererPort = process.argv[2];
     mainWindow.loadURL(`http://localhost:${rendererPort}`);
-    mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools(); 
   } else {
     mainWindow.loadFile(Path.join(app.getAppPath(), 'renderer', 'index.html'));
   }
@@ -39,20 +39,24 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 });
 
-ipcMain.on('message', (event, message) => {
-  console.log(message);
-})
-
 ipcMain.handle('request', async (event, url) => {
   const result = await axios.get(url);
   return result.data;
 });
 
+function getAppPath() {
+  if (process.env.NODE_ENV === 'development') {
+    return app.getAppPath();
+  } else {
+    return app.getPath('appData');
+  }
+}
+
 function getDataPath(fileName) {
   if (fileName) {
-    return Path.join(app.getAppPath(), 'data', `${fileName}.json`);
+    return Path.join(getAppPath(), 'electron-recipe-data', `${fileName}.json`);
   } 
-  return Path.join(app.getAppPath(), 'data');
+  return Path.join(getAppPath(), 'electron-recipe-data');
 }
 
 ipcMain.handle('readJSON', async (event, fileName) => {
