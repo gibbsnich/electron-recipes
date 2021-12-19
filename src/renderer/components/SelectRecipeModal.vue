@@ -1,28 +1,28 @@
 <template>
-<div class="modal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Rezeptauswahl</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closeNoSave"></button>
-      </div>
-      <div class="modal-body">
-        <p>Rezept auswählen:</p>
-        <p>
-            <select class="form-select" aria-label="Rezeptauswahl" v-model="this.selectedChoice">
-                <option value="-1">Rezept wählen..</option>
-                <option v-for="choice in this.$store.state.recipes" :value="choice.id" v-bind:key="choice.id">
-                    {{ choice.name }}
-                </option>
-            </select>
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" @click="close">Speichern</button>
-      </div>
+    <div class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Rezeptauswahl</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closeNoSave"></button>
+        </div>
+        <div class="modal-body">
+            <p>Rezept auswählen:</p>
+            <p>
+                <select class="form-select" aria-label="Rezeptauswahl" v-model="this.selectedChoice">
+                    <option value="-1">Rezept wählen..</option>
+                    <option v-for="choice in this.$store.state.recipes" :value="choice.id" v-bind:key="choice.id">
+                        {{ choice.name }}
+                    </option>
+                </select>
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" @click="close">Speichern</button>
+        </div>
+        </div>
     </div>
-  </div>
-</div>
+    </div>
 </template>
 
 <script>

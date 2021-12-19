@@ -1,7 +1,11 @@
 <template>
-    <input type="text" class="importUrlField" v-model="recipeUrl" />
-    <br />
-    <button @click="startImport">Importieren</button>
+    <div class="card bg-light">
+        <div class="card-header">Von URL importieren</div>
+        <div class="card-body">
+            <input id="url-input" type="text" class="form-control" placeholder="URL" v-model="recipeUrl" />
+            <button id="import-button" type="button" class="btn btn-primary" @click="startImport">Importieren</button>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -35,5 +39,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.importUrlField { width: 100%; }
+.card {margin-top: 1rem;}
+#url-input { margin-bottom: .5rem; }
+#import-button { margin-left: 2rem; }
 </style>

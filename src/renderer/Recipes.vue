@@ -1,33 +1,40 @@
 <template>
-<div class='fc fc-media-screen fc-direction-ltr fc-theme-standard'>
-    <div class='fc-header-toolbar fc-toolbar fc-toolbar-ltr'>
-        <div class='fc-toolbar-chunk'>
-            <div class='fc-button-group'>
-                <button @click="gotoCalendar" type="button" class='fc-button fc-button-primary'>Kalender</button>
+    <div class='fc fc-media-screen fc-direction-ltr fc-theme-standard'>
+        <div class='fc-header-toolbar fc-toolbar fc-toolbar-ltr'>
+            <div class='fc-toolbar-chunk'>
+                <div class='fc-button-group'>
+                    <button @click="gotoCalendar" type="button" class='fc-button fc-button-primary'>Kalender</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="container">
-        <div class="item">
-            <h4>Vorhandene Rezepte:</h4>
-            <ul>
-                <li v-for="recipe in this.$store.state.recipes" v-bind:key="recipe.id">
-                    <a href="#" @click.prevent="selectRecipe(recipe.id)">{{ recipe.name }}</a>
-                </li>
-            </ul>
-            <button @click="addRecipe" type="button">Rezept anlegen</button>
-            <br/>
-            <button @click="importRecipe" type="button">Rezept importieren</button>
-            <div v-show="showImporter">
-                <RecipeImporter @recipe-imported="recipeImported" />
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h6>Vorhandene Rezepte:</h6>
+                    <div class="list-group">
+                        <button type="button" v-for="recipe in this.$store.state.recipes" v-bind:key="recipe.id" 
+                                :class="['list-group-item', 'list-group-item-action', {active: recipeId === recipe.id}]"
+                                @click="selectRecipe(recipe.id)">{{ recipe.name }}</button>
+                    </div>
+                    <ul class="list-group" id="action-group">
+                        <li class="list-group-item">
+                            <button type="button" class="btn btn-primary" @click="addRecipe" >Rezept anlegen</button>
+                        </li>
+                        <li class="list-group-item">
+                            <button type="button" :class="['btn', 'btn-primary', {active: showImporter}]" @click="importRecipe" >Rezept importieren</button>
+                            <div v-show="showImporter">
+                                <RecipeImporter @recipe-imported="recipeImported" />
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-9">
+                    <RecipeDetails :recipeId=recipeId :recipeData=recipeData :clearRecipe=clearRecipe />
+                </div>
             </div>
         </div>
-        <div class="item-center">
-            <RecipeDetails :recipeId=recipeId :recipeData=recipeData :clearRecipe=clearRecipe />
-        </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -70,8 +77,8 @@ export default defineComponent({
       },
       recipeImported(recipe) {
           this.clearRecipe = false;
-          this.recipeId = null;
           this.recipeData = recipe;
+          this.recipeId = recipe.id ? recipe.id : null;
           this.showImporter = false;
       }
   }
@@ -80,20 +87,5 @@ export default defineComponent({
 
 <style scoped src='@fullcalendar/common/main.css'></style>
 <style scoped>
-.container {
-  display: flex;
-}
-
-.item {
-  height: 100px;
-  width: 240px;
-}
-
-.item-center { 
-  flex-grow: 1;
-}
-
-.item + .item { 
-  margin-left: 2%; 
-}
+#action-group {margin-top: 1rem;}
 </style>

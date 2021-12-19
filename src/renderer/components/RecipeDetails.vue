@@ -1,26 +1,40 @@
 <template>
-    <div>
-        <h4>Name:</h4><input type="text" v-model="currentRecipe.name" />    
+    <div class="row mb-3">
+        <label for="name-input" class="col-sm-2 col-form-label">Name</label>
+        <div class="col-sm-10">
+        <input type="text" class="form-control" id="name-input" v-model="currentRecipe.name">
+        </div>
     </div>
-    <div>
-        <h4>Genug für:</h4><input type="text" v-model="currentRecipe.serving.value" /><input type="text" v-model="currentRecipe.serving.type" />
+    <div class="row mb-3">
+        <label for="name-input" class="col-sm-2 col-form-label">Genug für</label>
+        <div class="col-sm-3">
+        <input type="text" class="form-control" id="name-input" v-model="currentRecipe.serving.value">
+        </div>
+        <div class="col-sm-7">
+        <input type="text" class="form-control" id="name-input" v-model="currentRecipe.serving.type">
+        </div>
     </div>
-
-    <h3>Zutaten:</h3>
-    <div v-for="(ingredient, index) in currentRecipe.ingredients" v-bind:key="index">
-        <input type="text" v-model="ingredient.amount" />
-        <input type="text" v-model="ingredient.ingredient" />
-        <button type="button" @click="deleteIngredient(index)">[X]</button>
-    </div>
-    <div>
-        <input type="text" v-model="newIngredient.amount" />
-        <input type="text" v-model="newIngredient.ingredient" />
-        <button type="button" @click="addIngredient()">[N]</button>
-    </div>
-    
-    <h3>Zubereitung:</h3>
-    <textarea class="prepArea" rows="20" v-model="currentRecipe.preparation" />
-    <button v-show="currentRecipe.name !== ''" @click="saveRecipe" type="button">Rezept speichern</button>
+    <h5>Zutaten:</h5>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item" v-for="(ingredient, index) in currentRecipe.ingredients" v-bind:key="index">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Menge" aria-label="Zutat" v-model="ingredient.amount" >
+                <input type="text" class="form-control" placeholder="Zutat" readonly aria-label="Menge" v-model="ingredient.ingredient" >
+                <button type="button" class="btn btn-danger btn-sm" aria-label="Close" @click="deleteIngredient(index)">[X]</button>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="input-group">
+                <!-- todo: DropDown vorhandener passender Zutaten, wenn mehr als Zeichen eingegeben wurde -->
+                <input type="text" class="form-control" placeholder="Menge" aria-label="Zutat" v-model="newIngredient.amount">
+                <input type="text" class="form-control" placeholder="Zutat" aria-label="Menge" v-model="newIngredient.ingredient">
+                <button type="button" class="btn btn-success btn-sm" aria-label="Close" @click="addIngredient()">[N]</button>
+            </div>
+        </li>
+    </ul>
+    <h5 id="prep-label">Zubereitung:</h5>
+    <textarea class="form-control" rows="20" v-model="currentRecipe.preparation" />
+    <button id="save-button" type="button" class="btn btn-primary" :disabled="currentRecipe.name === ''" @click="saveRecipe" >Rezept speichern</button>
 </template>
 
 <script>
@@ -65,8 +79,10 @@ export default defineComponent({
     },
     methods: {
         addIngredient() {
-            this.currentRecipe.ingredients.push(this.newIngredient);
-            this.newIngredient = this.makeEmptyIngredient();
+            if (this.newIngredient.ingredient !== '') {
+                this.currentRecipe.ingredients.push(this.newIngredient);
+                this.newIngredient = this.makeEmptyIngredient();
+            }
         },
         deleteIngredient(index) {
             this.currentRecipe.ingredients.splice(index, 1);
@@ -91,5 +107,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.prepArea { width: 100%;}
+#prep-label { margin-top: .5rem; }
+#save-button { margin-top: .5rem; margin-left: 2rem; margin-bottom: 1rem; }
 </style>

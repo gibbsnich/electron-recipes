@@ -1,59 +1,59 @@
 <template>
-<div class="modal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Zutatenauswahl</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closeNoSave"></button>
-      </div>
-      <div class="modal-body">
-        <p>Zutaten auswählen:</p>
-        <div class="accordion">
-            <div class="accordion-item"
-                    v-for="ingredientCategory in this.$store.state.ingredientCategories" v-bind:key="ingredientCategory.id">
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button type="button" :class="['accordion-button', {collapsed: ingredientCategory.id !== expandedCategory}]" @click="toggle(ingredientCategory.id)">
-                            {{ ingredientCategory.name }}
-                        </button>
-                    </h2>
-                    <div :class="['accordion-collapse', 'collapse', {show: ingredientCategory.id === expandedCategory}]">
-                        <div class="accordion-body">
-                            <button type="button" class="btn btn-outline-primary"
-                                @click="addIngredientById(ingredient.id)"
-                                v-for="ingredient in this.$store.state.ingredients.filter((i) => { return i.categoryId === ingredientCategory.id })" v-bind:key="ingredient.id">
-                                {{ ingredient.ingredient }}
-                            </button>
+    <div class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Zutatenauswahl</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closeNoSave"></button>
+            </div>
+            <div class="modal-body">
+                <p>Zutaten auswählen:</p>
+                <div class="accordion">
+                    <div class="accordion-item"
+                            v-for="ingredientCategory in this.$store.state.ingredientCategories" v-bind:key="ingredientCategory.id">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button type="button" :class="['accordion-button', {collapsed: ingredientCategory.id !== expandedCategory}]" @click="toggle(ingredientCategory.id)">
+                                    {{ ingredientCategory.name }}
+                                </button>
+                            </h2>
+                            <div :class="['accordion-collapse', 'collapse', {show: ingredientCategory.id === expandedCategory}]">
+                                <div class="accordion-body">
+                                    <button type="button" class="btn btn-outline-primary"
+                                        @click="addIngredientById(ingredient.id)"
+                                        v-for="ingredient in this.$store.state.ingredients.filter((i) => { return i.categoryId === ingredientCategory.id })" v-bind:key="ingredient.id">
+                                        {{ ingredient.ingredient }}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <p>Gewählte Zutaten:</p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" v-for="(ingredient, index) in ingredients" v-bind:key="index">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Menge" aria-label="Zutat" v-model="ingredient.amount" >
+                            <input type="text" class="form-control" placeholder="Zutat" readonly aria-label="Menge" v-model="ingredient.ingredient" >
+                            <button type="button" class="btn btn-danger btn-sm" aria-label="Close" @click="deleteIngredient(index)">[X]</button>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="input-group">
+                            <!-- todo: DropDown vorhandener passender Zutaten, wenn mehr als Zeichen eingegeben wurde -->
+                            <input type="text" class="form-control" placeholder="Menge" aria-label="Zutat" v-model="newIngredient.amount">
+                            <input type="text" class="form-control" placeholder="Zutat" aria-label="Menge" v-model="newIngredient.ingredient">
+                            <button type="button" class="btn btn-success btn-sm" aria-label="Close" @click="addIngredient()">[N]</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" @click="close">Speichern</button>
+            </div>
             </div>
         </div>
-        <p>Gewählte Zutaten:</p>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item" v-for="(ingredient, index) in ingredients" v-bind:key="index">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Menge" aria-label="Zutat" v-model="ingredient.amount" >
-                    <input type="text" class="form-control" placeholder="Zutat" readonly aria-label="Menge" v-model="ingredient.ingredient" >
-                    <button type="button" class="btn btn-danger btn-sm" aria-label="Close" @click="deleteIngredient(index)">[X]</button>
-                </div>
-            </li>
-            <li class="list-group-item">
-                <div class="input-group mb-3">
-                    <!-- todo: DropDown vorhandener passender Zutaten, wenn mehr als Zeichen eingegeben wurde -->
-                    <input type="text" class="form-control" placeholder="Menge" aria-label="Zutat" v-model="newIngredient.amount">
-                    <input type="text" class="form-control" placeholder="Zutat" aria-label="Menge" v-model="newIngredient.ingredient">
-                    <button type="button" class="btn btn-success btn-sm" aria-label="Close" @click="addIngredient()">[N]</button>
-                </div>
-            </li>
-        </ul>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" @click="close">Speichern</button>
-      </div>
     </div>
-  </div>
-</div>
 </template>
 
 <script>
