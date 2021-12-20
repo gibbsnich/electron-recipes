@@ -64,12 +64,12 @@ export default defineComponent({
             if (!recipe) {
                 return console.warn("Couldn't select recipe.")
             }
-            this.currentRecipe = recipe;
+            this.currentRecipe = JSON.parse(JSON.stringify(recipe));
         },
         recipeData(rdata) {
             if (!rdata)
                 return;
-            this.currentRecipe = rdata;
+            this.currentRecipe = JSON.parse(JSON.stringify(rdata));
         },
         clearRecipe(flag) {
             if (flag) {
@@ -93,8 +93,9 @@ export default defineComponent({
                 this.currentRecipe.ingredients.push(this.newIngredient);
             }
             this.$store.dispatch('storeRecipe', this.currentRecipe);
-            this.currentRecipe = this.makeEmptyRecipe();
-            this.newIngredient = this.makeEmptyIngredient();
+            //keep current recipe visible after save
+            //this.currentRecipe = this.makeEmptyRecipe();
+            //this.newIngredient = this.makeEmptyIngredient();
         },
         makeEmptyIngredient() {
             return {amount: '', ingredient: ''};

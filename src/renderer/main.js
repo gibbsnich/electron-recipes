@@ -53,6 +53,9 @@ const store = createStore({
                 const nextRecipeId = nextId(state.recipes);
                 recipe.id = nextRecipeId;
                 state.recipes.push(recipe);
+            } else {
+                const recipeIndex = state.recipes.findIndex((r) => r.id === recipe.id);
+                state.recipes[recipeIndex] = recipe;
             }
         },
         storeIngredient(state, { ingredientWithoutCategory, ingredientCategoryId }) {
