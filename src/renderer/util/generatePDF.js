@@ -36,12 +36,13 @@ export const generatePDF = ({start, end}, store) => {
             y = 10;
             doc.addPage();
         }
+        const text = allIngredients[i].length > 0 ? `${allIngredients[i]} ${i}` : i;
         const checkbox = new AcroFormCheckBox();
         checkbox.appearanceState = 'Off';
-        checkbox.fieldName = `${allIngredients[i]} ${i}`;
+        checkbox.fieldName = text;
         checkbox.Rect = [10, y-8, 10, 10];
         doc.addField(checkbox);
-        doc.text(`${allIngredients[i]} ${i}`, 20, y);
+        doc.text(text, 20, y);
         y += 8;
     });
 
