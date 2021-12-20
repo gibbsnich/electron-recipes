@@ -42,4 +42,7 @@ export default defineComponent({
 .card {margin-top: 1rem;}
 #url-input { margin-bottom: .5rem; }
 #import-button { margin-left: 2rem; }
+@media (max-width: 992px) {
+    #import-button { margin-left: 0; }
+}
 </style>
