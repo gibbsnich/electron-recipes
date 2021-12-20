@@ -15,23 +15,7 @@
         </div>
     </div>
     <h5>Zutaten:</h5>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item" v-for="(ingredient, index) in currentRecipe.ingredients" v-bind:key="index">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Menge" aria-label="Zutat" v-model="ingredient.amount" >
-                <input type="text" class="form-control" placeholder="Zutat" readonly aria-label="Menge" v-model="ingredient.ingredient" >
-                <button type="button" class="btn btn-danger btn-sm" aria-label="Close" @click="deleteIngredient(index)">[X]</button>
-            </div>
-        </li>
-        <li class="list-group-item">
-            <div class="input-group">
-                <!-- todo: DropDown vorhandener passender Zutaten, wenn mehr als Zeichen eingegeben wurde -->
-                <input type="text" class="form-control" placeholder="Menge" aria-label="Zutat" v-model="newIngredient.amount">
-                <input type="text" class="form-control" placeholder="Zutat" aria-label="Menge" v-model="newIngredient.ingredient">
-                <button type="button" class="btn btn-success btn-sm" aria-label="Close" @click="addIngredient()">[N]</button>
-            </div>
-        </li>
-    </ul>
+    <ingredients-list :ingredients="this.currentRecipe.ingredients" />
     <h5 id="prep-label">Zubereitung:</h5>
     <textarea class="form-control" rows="20" v-model="currentRecipe.preparation" />
     <button id="save-button" type="button" class="btn btn-primary" :disabled="currentRecipe.name === ''" @click="saveRecipe" >Rezept speichern</button>
@@ -39,11 +23,12 @@
 
 <script>
 import { defineComponent } from 'vue';
+import IngredientsList from './IngredientsList.vue';
 
 export default defineComponent({
     name: 'RecipeDetails',
-    setup() {
-
+    components: {
+        IngredientsList,
     },
     props: {
         recipeId: Number, 
@@ -53,7 +38,6 @@ export default defineComponent({
     data() {
       return {
           currentRecipe: this.makeEmptyRecipe(),
-          newIngredient: this.makeEmptyIngredient(),
       }
     },
     watch: {
@@ -78,27 +62,11 @@ export default defineComponent({
         },
     },
     methods: {
-        addIngredient() {
-            if (this.newIngredient.ingredient !== '') {
-                this.currentRecipe.ingredients.push(this.newIngredient);
-                this.newIngredient = this.makeEmptyIngredient();
-            }
-        },
-        deleteIngredient(index) {
-            this.currentRecipe.ingredients.splice(index, 1);
-        },
         saveRecipe() {
             this.currentRecipe.ingredients = this.currentRecipe.ingredients.filter((i) => i.amount !== '' || i.ingredient !== '');
-            if (this.newIngredient.amount !== '' || this.newIngredient.ingredient !== '') {
-                this.currentRecipe.ingredients.push(this.newIngredient);
-            }
             this.$store.dispatch('storeRecipe', this.currentRecipe);
             //keep current recipe visible after save
             //this.currentRecipe = this.makeEmptyRecipe();
-            this.newIngredient = this.makeEmptyIngredient();
-        },
-        makeEmptyIngredient() {
-            return {amount: '', ingredient: ''};
         },
         makeEmptyRecipe() {
             return {name: '', serving: {value: '', type: ''}, ingredients: [], preparation: '', url: ''};
@@ -108,6 +76,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-#prep-label { margin-top: .5rem; }
-#save-button { margin-top: .5rem; margin-left: 2rem; margin-bottom: 1rem; }
+    #prep-label { margin-top: .5rem; }
+    #save-button { margin-top: .5rem; margin-left: 2rem; margin-bottom: 1rem; }
 </style>

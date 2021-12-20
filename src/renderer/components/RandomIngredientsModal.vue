@@ -30,23 +30,7 @@
                     </div>
                 </div>
                 <p>Gewählte Zutaten:</p>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item" v-for="(ingredient, index) in ingredients" v-bind:key="index">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Menge" aria-label="Zutat" v-model="ingredient.amount" >
-                            <input type="text" class="form-control" placeholder="Zutat" readonly aria-label="Menge" v-model="ingredient.ingredient" >
-                            <button type="button" class="btn btn-danger btn-sm" aria-label="Close" @click="deleteIngredient(index)">[X]</button>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="input-group">
-                            <!-- todo: DropDown vorhandener passender Zutaten, wenn mehr als Zeichen eingegeben wurde -->
-                            <input type="text" class="form-control" placeholder="Menge" aria-label="Zutat" v-model="newIngredient.amount">
-                            <input type="text" class="form-control" placeholder="Zutat" aria-label="Menge" v-model="newIngredient.ingredient">
-                            <button type="button" class="btn btn-success btn-sm" aria-label="Close" @click="addIngredient()">[N]</button>
-                        </div>
-                    </li>
-                </ul>
+                <ingredients-list :ingredients="this.ingredients" />
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" @click="close">Speichern</button>
@@ -58,15 +42,18 @@
 
 <script>
 import { defineComponent } from 'vue';
+import IngredientsList from './IngredientsList.vue';
 
 export default defineComponent({
     name: 'RandomIngredientsModal',
+    components: {
+        IngredientsList,
+    },
     props: {
         date: String,
     },
     data() {
         return {
-            newIngredient: this.makeEmptyIngredient(),
             expandedCategory: -1,
             ingredientsArray: [],
         }
@@ -85,19 +72,7 @@ export default defineComponent({
         }
     },
     methods: {
-        addIngredient() {
-            if (this.newIngredient.ingredient !== '') {
-                //todo match to existing ingredient (with ID!), 
-                //if no match: show red border
-                this.ingredients.push(this.newIngredient);
-                this.newIngredient = this.makeEmptyIngredient();
-            }
-        },
-        deleteIngredient(index) {
-            this.ingredients.splice(index, 1);
-        },
         close() {
-            this.ingredients.push(this.newIngredient);
             const nonEmptyIngredients = this.ingredients.filter((i) => i.amount !== '' || i.ingredient !== '');
             if (nonEmptyIngredients.length > 0) {
                 this.$emit('close', {
@@ -112,14 +87,10 @@ export default defineComponent({
             }
             this.ingredientsArray = [];
             this.expandedCategory = -1;
-            this.newIngredient = this.makeEmptyIngredient();
         },
         closeNoSave() {
             this.ingredientsArray = [];
             this.$emit('close', null);
-        },
-        makeEmptyIngredient() {
-            return {amount: '', ingredient: '', id: null, categoryId: null};
         },
         toggle(ingredientCategoryId) {
             if (this.expandedCategory === ingredientCategoryId) {
@@ -137,11 +108,12 @@ export default defineComponent({
     }
 })
 </script>
+
 <style scoped>
-button.btn {
-    margin-right: .5rem;
-}
-.accordion-button {
-    padding: 0;
-}
+    button.btn {
+        margin-right: .5rem;
+    }
+    .accordion-button {
+        padding: 0;
+    }
 </style>
