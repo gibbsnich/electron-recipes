@@ -10,7 +10,7 @@
 
         <div class="container">
             <div class="row">
-                <div class="col">
+                <div class="col-sm-3">
                     <h6>Vorhandene Rezepte:</h6>
                     <div class="list-group">
                         <button type="button" v-for="recipe in this.$store.state.recipes" v-bind:key="recipe.id" 
@@ -29,7 +29,7 @@
                         </li>
                     </ul>
                 </div>
-                <div class="col-9">
+                <div class="col-sm-9">
                     <RecipeDetails :recipeId=recipeId :recipeData=recipeData :clearRecipe=clearRecipe />
                 </div>
             </div>
