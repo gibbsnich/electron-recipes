@@ -10,7 +10,7 @@
                 <p>Zutaten auswählen:</p>
                 <div class="accordion">
                     <div class="accordion-item"
-                            v-for="ingredientCategory in this.$store.state.ingredientCategories" v-bind:key="ingredientCategory.id">
+                            v-for="ingredientCategory in categories()" v-bind:key="ingredientCategory.id">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button type="button" :class="['accordion-button', {collapsed: ingredientCategory.id !== expandedCategory}]" @click="toggle(ingredientCategory.id)">
@@ -19,9 +19,9 @@
                             </h2>
                             <div :class="['accordion-collapse', 'collapse', {show: ingredientCategory.id === expandedCategory}]">
                                 <div class="accordion-body">
-                                    <button type="button" class="btn btn-outline-primary"
+                                    <button type="button" class="btn btn-outline-primary btn-ing"
                                         @click="addIngredientById(ingredient.id)"
-                                        v-for="ingredient in this.$store.state.ingredients.filter((i) => { return i.categoryId === ingredientCategory.id })" v-bind:key="ingredient.id">
+                                        v-for="ingredient in categoryIngredients(ingredientCategory.id)" v-bind:key="ingredient.id">
                                         {{ ingredient.ingredient }}
                                     </button>
                                 </div>
@@ -72,6 +72,12 @@ export default defineComponent({
         }
     },
     methods: {
+        categories() {
+            return this.$store.state.ingredientCategories.sort((a, b) => a.name < b.name ? -1 : (b.name < a.name ? 1 : 0));
+        },
+        categoryIngredients(categoryId) {
+            return this.$store.state.ingredients.filter((i) => { return i.categoryId === categoryId }).sort((a, b) => a.ingredient < b.ingredient ? -1 : (b.ingredient < a.ingredient ? 1 : 0));
+        },
         close() {
             const nonEmptyIngredients = this.ingredients.filter((i) => i.amount !== '' || i.ingredient !== '');
             if (nonEmptyIngredients.length > 0) {
@@ -115,5 +121,8 @@ export default defineComponent({
     }
     .accordion-button {
         padding: 0;
+    }
+    button.btn-ing {
+        margin-top: .2rem;
     }
 </style>
