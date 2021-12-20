@@ -95,7 +95,7 @@ export default defineComponent({
             this.$store.dispatch('storeRecipe', this.currentRecipe);
             //keep current recipe visible after save
             //this.currentRecipe = this.makeEmptyRecipe();
-            //this.newIngredient = this.makeEmptyIngredient();
+            this.newIngredient = this.makeEmptyIngredient();
         },
         makeEmptyIngredient() {
             return {amount: '', ingredient: ''};
