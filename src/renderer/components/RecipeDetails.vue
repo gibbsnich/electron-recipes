@@ -27,6 +27,7 @@ import IngredientsList from './IngredientsList.vue';
 
 export default defineComponent({
     name: 'RecipeDetails',
+    emits: ['save'],
     components: {
         IngredientsList,
     },
@@ -64,7 +65,7 @@ export default defineComponent({
     methods: {
         saveRecipe() {
             this.currentRecipe.ingredients = this.currentRecipe.ingredients.filter((i) => i.amount !== '' || i.ingredient !== '');
-            this.$store.dispatch('storeRecipe', this.currentRecipe);
+            this.$emit('save', this.currentRecipe);
             //keep current recipe visible after save
             //this.currentRecipe = this.makeEmptyRecipe();
         },

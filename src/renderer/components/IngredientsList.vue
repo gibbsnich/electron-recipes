@@ -4,7 +4,7 @@
         <li class="list-group-item" v-for="(ingredient, index) in ingredients" v-bind:key="index">
             <div class="input-group">
                 <input type="text"  class="form-control" placeholder="Menge" aria-label="Menge" :value="ingredient.amount">
-                <input type="text" :class="['form-control', {unknown: !ingredient.id}]" placeholder="Zutat" aria-label="Zutat" v-model="ingredient.ingredient" @change="ingredientChanged($event, index)">
+                <input type="text" :class="['form-control', {unknown: !ingredient.id}]" placeholder="Zutat" aria-label="Zutat" :value="ingredient.ingredient" v-on:change="ingredientChanged(index, $event)">
                 <button type="button" class="btn btn-danger btn-sm" aria-label="Close" @click="deleteIngredient(index)">[X]</button>
             </div>
         </li>
@@ -35,7 +35,7 @@ export default defineComponent({
         this.newIngredient = this.makeEmptyIngredient();
     },
     methods: {
-        ingredientChanged(event, ingredientIndex) {
+        ingredientChanged(ingredientIndex, event) {
             const oldIngredient = this.ingredients[ingredientIndex];
             const newIngredientValue = event.target.value.trim();
             oldIngredient.ingredient = newIngredientValue;

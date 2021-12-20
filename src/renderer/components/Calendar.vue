@@ -15,6 +15,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import SelectRecipeModal from './SelectRecipeModal.vue';
 import RandomIngredientsModal from './RandomIngredientsModal.vue';
+import { UnknownIngredientsMixin } from './UnknownIngredientsMixin.js';
 import IngredientWithoutCategoryModal from './IngredientWithoutCategoryModal.vue';
 import { dateToString } from '../util/date.js';
 import { generatePDF } from '../util/generatePDF.js';
@@ -26,6 +27,7 @@ export default defineComponent({
         RandomIngredientsModal,
         IngredientWithoutCategoryModal,
     },
+    mixins: [UnknownIngredientsMixin],
     data() {
         return {
             currentSelection: null,
@@ -66,8 +68,7 @@ export default defineComponent({
             isRandomIngredientsModalVisible: false,
             randomIngredientsDate: null,
             newIngredientsEvent: null,
-            isIngredientWithoutCategoryModalVisible: false,
-            ingredientWithoutCategory: null,
+            unknownIngredients: null,
         }
     },
     methods: {
@@ -98,11 +99,12 @@ export default defineComponent({
         closeRandomIngredientsModal(ingredientsEvent) {
             this.isRandomIngredientsModalVisible = false;
             if (ingredientsEvent) {
-                const withoutCategory = checkForIngredientsWithoutCategory(ingredientsEvent);
+                const withoutCategory = this.checkForIngredientsWithoutCategory(ingredientsEvent.extendedProps.ingredients);
                 if (withoutCategory) {
                     this.ingredientWithoutCategory = withoutCategory;
                     this.isIngredientWithoutCategoryModalVisible = true;
                     this.newIngredientsEvent = ingredientsEvent;
+                    this.unknownIngredients = ingredientsEvent.extendedProps.ingredients;
                 } else {
                     //todo delete event if empty ingredients
                     this.$store.dispatch('storeEvent', ingredientsEvent);
@@ -110,34 +112,10 @@ export default defineComponent({
             }
             this.randomIngredientsDate = null;
         },
-        async closeIngredientsWithoutCategoryModal(selectedIngredientCategory) {
-            if (selectedIngredientCategory.name) {
-                await this.$store.dispatch('storeIngredientCategory', selectedIngredientCategory.name);
-                const ingredientCategory = this.$store.state.ingredientCategories.find((ic) => ic.name === selectedIngredientCategory.name);
-                if (!ingredientCategory) {
-                    console.warn("Cannot find created category!");
-                } else {
-                    selectedIngredientCategory.id = ingredientCategory.id;
-                }
-            }
-            this.$store.dispatch('storeIngredient', {ingredientWithoutCategory: this.ingredientWithoutCategory, ingredientCategoryId: selectedIngredientCategory.id});
-            const withoutCategory = checkForIngredientsWithoutCategory(this.newIngredientsEvent);
-            if (withoutCategory) {
-                this.ingredientWithoutCategory = withoutCategory;
-            } else {
-                this.$store.dispatch('storeEvent', this.newIngredientsEvent);
-                this.newIngredientsEvent = null;
-                this.isIngredientWithoutCategoryModalVisible = false;
-            }
+        finishedHandlingUnknownIngredients() {
+            this.$store.dispatch('storeEvent', this.newIngredientsEvent);
+            this.newIngredientsEvent = null;
         },
     }
 });
-
-function checkForIngredientsWithoutCategory(ingredientsEvent) {
-    const withoutCategory = ingredientsEvent.extendedProps.ingredients.find((i) => !i.id);
-    if (withoutCategory) {
-        return withoutCategory;
-    }
-    return null;
-}
 </script>

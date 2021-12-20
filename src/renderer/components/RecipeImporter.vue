@@ -14,12 +14,12 @@ import { fetchRecipe } from '../util/fetchRecipe.js';
 
 export default defineComponent({
     name: 'recipeImporter',
+    emits: ['recipeImported'],
     data() {
         return {
             recipeUrl: ""
         }
     },
-    emits: ['recipeImported'],
     methods: {
         async startImport() {
             if (!this.recipeUrl || this.recipeUrl.length === 0) {

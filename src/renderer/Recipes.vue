@@ -1,4 +1,5 @@
 <template>
+    <ingredient-without-category-modal v-show="isIngredientWithoutCategoryModalVisible" @close="closeIngredientsWithoutCategoryModal" v-bind:ingredient="ingredientWithoutCategory" />
     <div class='fc fc-media-screen fc-direction-ltr fc-theme-standard'>
         <div class='fc-header-toolbar fc-toolbar fc-toolbar-ltr'>
             <div class='fc-toolbar-chunk'>
@@ -30,7 +31,7 @@
                     </ul>
                 </div>
                 <div class="col-sm-9">
-                    <RecipeDetails :recipeId=recipeId :recipeData=recipeData :clearRecipe=clearRecipe />
+                    <RecipeDetails :recipeId=recipeId :recipeData=recipeData :clearRecipe=clearRecipe @save="recipeSaved" />
                 </div>
             </div>
         </div>
@@ -41,6 +42,8 @@
 import { defineComponent } from 'vue';
 import RecipeDetails from './components/RecipeDetails.vue';
 import RecipeImporter from './components/RecipeImporter.vue';
+import { UnknownIngredientsMixin } from './components/UnknownIngredientsMixin.js';
+import IngredientWithoutCategoryModal from './components/IngredientWithoutCategoryModal.vue';
 
 export default defineComponent({
   components: [ RecipeDetails ],
@@ -48,13 +51,16 @@ export default defineComponent({
   components: {
     RecipeDetails,
     RecipeImporter,
+    IngredientWithoutCategoryModal,
   },
+  mixins: [UnknownIngredientsMixin],
   data() {
       return {
           recipeId: null,
           recipeData: null,
           showImporter: false,
           clearRecipe: false,
+          savedRecipe: null,
       }
   },
   methods: {
@@ -80,7 +86,22 @@ export default defineComponent({
           this.recipeData = recipe;
           this.recipeId = recipe.id ? recipe.id : null;
           this.showImporter = false;
-      }
+      },
+      recipeSaved(recipe) {
+          const withoutCategory = this.checkForIngredientsWithoutCategory(recipe.ingredients);
+          if (withoutCategory) {
+              this.savedRecipe = recipe;
+              this.ingredientWithoutCategory = withoutCategory;
+              this.isIngredientWithoutCategoryModalVisible = true;
+              this.unknownIngredients = this.savedRecipe.ingredients;
+          } else {
+              this.$store.dispatch('storeRecipe', recipe);
+          }
+      },
+      finishedHandlingUnknownIngredients() {
+          this.$store.dispatch('storeRecipe', this.savedRecipe);
+          this.savedRecipe = null;
+      },
   }
 });
 </script>
