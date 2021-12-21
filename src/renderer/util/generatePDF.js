@@ -19,37 +19,54 @@ export const generatePDF = ({start, end}, store) => {
     extraEvents.forEach((i) => i.forEach((ii) => allIngredientsPerRecipe.push(ii)));
     const allIngredients = allIngredientsPerRecipe.reduce((memo, i) => {
         if (memo[i.ingredient]) {
-            memo[i.ingredient] = `${memo[i.ingredient]} + ${i.amount}`;
+            memo[i.ingredient].amount = `${memo[i.ingredient].amount} + ${i.amount}`;
         } else {
-            memo[i.ingredient] = i.amount;
+            memo[i.ingredient] = {amount: i.amount, store: i.storeId, category: i.categoryId};
         }
         return memo;
     }, {});
 
-    doc.setFontSize('14');
-    doc.text('Einkaufsliste', 20, 10);
+    doc.setFontSize('16');
+    doc.text('Einkaufsliste', 60, 10);
     doc.setFontSize('12');
     const ingredientKeys = Object.keys(allIngredients).sort((a, b) => a < b ? -1 : (b < a ? 1 : 0));
     let y = 20;
-    ingredientKeys.forEach((i, idx) => {
-        if (y > MAX_PAGE_Y) {
-            y = 10;
-            doc.addPage();
+    const stores = store.getters.getSortedIngredientStores;
+    const categories = store.getters.getSortedIngredientCategories;
+    stores.forEach((store, idx) => {
+        if (ingredientKeys.filter(ik => allIngredients[ik].store === store.id).length > 0) {
+            doc.setFontSize('14');
+            doc.text(store.name, 30, y);
+            doc.setFontSize('12');
+            y += 8;
         }
-        const text = allIngredients[i].length > 0 ? `${allIngredients[i]} ${i}` : i;
-        const checkbox = new AcroFormCheckBox();
-        checkbox.appearanceState = 'Off';
-        checkbox.fieldName = text;
-        checkbox.Rect = [10, y-8, 10, 10];
-        doc.addField(checkbox);
-        doc.text(text, 20, y);
-        y += 8;
+        categories.forEach((category, idx) => {
+            const filteredKeys = ingredientKeys.filter(ik => allIngredients[ik].store === store.id && allIngredients[ik].category === category.id);
+            if (filteredKeys.length > 0) {
+                //doc.text(category.name, 25, y);
+                //y += 8;
+                filteredKeys.sort((a, b) => a < b ? -1 : (b < a ? 1 : 0)).forEach((i, idx) => {
+                    if (y > MAX_PAGE_Y) {
+                        y = 10;
+                        doc.addPage();
+                    }
+                    const text = allIngredients[i].amount.length > 0 ? `${allIngredients[i].amount} ${i}` : i;
+                    const checkbox = new AcroFormCheckBox();
+                    checkbox.appearanceState = 'Off';
+                    checkbox.fieldName = text;
+                    checkbox.Rect = [10, y-8, 10, 10];
+                    doc.addField(checkbox);
+                    doc.text(text, 20, y);
+                    y += 8;
+                });
+            }   
+        });
     });
 
     currentEvents.sort((a, b) => a.start < b.start ? -1 : (b.start < a.start ? 1 : 0)).forEach((e) => {
         const readableDate = dateStringToReadableString(e.start);
         const time = e.start.indexOf('T12:') !== -1 ? 'Mittagessen' : 'Abendessen';
-        const currentRecipe = store.state.getters.getRecipeById(e.extendedProps.recipeId);
+        const currentRecipe = store.getters.getRecipeById(e.extendedProps.recipeId);
         if (currentRecipe) {
             doc.addPage();
             doc.setFontSize('14');
