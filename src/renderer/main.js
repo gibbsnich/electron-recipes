@@ -59,7 +59,11 @@ const store = createStore({
             return state.events.find(event => event.start === eventStart);
         },
         getIngredientEventByStart: (state) => (ingredientEventStart) => {
-            return state.events.find((e) => e.extendedProps.extra && e.start === ingredientEventStart);
+            return state.events.find(event => event.extendedProps.extra && event.start === ingredientEventStart);
+        },
+        getIngredientsBySubstring: (state) => (subString) => {
+            const subStringLower = subString.toLowerCase();
+            return state.ingredients.filter(i => i.ingredient.toLowerCase().indexOf(subStringLower) > -1);
         },
         getRecipeById: (state) => (recipeId) => {
             return state.recipes.find(recipe => recipe.id === recipeId);
