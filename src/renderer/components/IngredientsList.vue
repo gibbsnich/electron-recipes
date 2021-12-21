@@ -51,7 +51,7 @@ export default defineComponent({
         },
         checkExistingIngredient(index) {
             const oldIngredient = this.ingredients[index];
-            const existingNewIngredient = this.$store.state.ingredients.find((i) => i.ingredient === oldIngredient.ingredient);
+            const existingNewIngredient = this.$store.getters.getIngredientByIngredient(oldIngredient.ingredient);
             if (existingNewIngredient) {
                 oldIngredient.id = existingNewIngredient.id;
                 oldIngredient.ingredientId = existingNewIngredient.ingredientId;

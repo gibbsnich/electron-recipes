@@ -9,8 +9,7 @@
             <div class="modal-body">
                 <p>Zutaten auswählen:</p>
                 <div class="accordion">
-                    <div class="accordion-item"
-                            v-for="ingredientCategory in categories()" v-bind:key="ingredientCategory.id">
+                    <div class="accordion-item" v-for="ingredientCategory in this.$store.getters.getSortedIngredientCategories" v-bind:key="ingredientCategory.id">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button type="button" :class="['accordion-button', {collapsed: ingredientCategory.id !== expandedCategory}]" @click="toggle(ingredientCategory.id)">
@@ -21,7 +20,7 @@
                                 <div class="accordion-body">
                                     <button type="button" class="btn btn-outline-primary btn-ing"
                                         @click="addIngredientById(ingredient.id)"
-                                        v-for="ingredient in categoryIngredients(ingredientCategory.id)" v-bind:key="ingredient.id">
+                                        v-for="ingredient in this.$store.getters.getSortedIngredients(ingredientCategory.id)" v-bind:key="ingredient.id">
                                         {{ ingredient.ingredient }}
                                     </button>
                                 </div>
@@ -62,7 +61,7 @@ export default defineComponent({
         ingredients: {
             get() {
                 if (this.date) {
-                    const ingredientsEvent = this.$store.state.events.find((e) => e.extendedProps.extra && e.start === this.date + "T14:00");
+                    const ingredientsEvent = this.$store.getters.getIngredientEventByStart(this.date + "T14:00");
                     if (ingredientsEvent) {
                         this.ingredientsArray = JSON.parse(JSON.stringify(ingredientsEvent.extendedProps.ingredients));
                     }
@@ -72,12 +71,6 @@ export default defineComponent({
         }
     },
     methods: {
-        categories() {
-            return this.$store.state.ingredientCategories.sort((a, b) => a.name < b.name ? -1 : (b.name < a.name ? 1 : 0));
-        },
-        categoryIngredients(categoryId) {
-            return this.$store.state.ingredients.filter((i) => { return i.categoryId === categoryId }).sort((a, b) => a.ingredient < b.ingredient ? -1 : (b.ingredient < a.ingredient ? 1 : 0));
-        },
         close() {
             const nonEmptyIngredients = this.ingredients.filter((i) => i.amount !== '' || i.ingredient !== '');
             if (nonEmptyIngredients.length > 0) {
@@ -106,7 +99,7 @@ export default defineComponent({
             }
         },
         addIngredientById(ingredientId) {
-            const selIngredient = this.$store.state.ingredients.find((i) => i.id === ingredientId);
+            const selIngredient = this.$store.getters.getIngredientById(ingredientId);
             if (selIngredient) {
                 this.ingredients.push({amount: '', ingredient: selIngredient.ingredient, id: selIngredient.id, categoryId: selIngredient.categoryId});
             }

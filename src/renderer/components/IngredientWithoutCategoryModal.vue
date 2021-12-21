@@ -9,7 +9,7 @@
                 <p>Neue Zutat ohne Kategorie gefunden:</p>
                 <div>
                     <h6>{{ ingredientName }}</h6>
-                    <div class="form-check form-check-inline" v-for="ingredientCategory in this.$store.state.ingredientCategories" v-bind:key="ingredientCategory.id">
+                    <div class="form-check form-check-inline" v-for="ingredientCategory in this.$store.getters.getSortedIngredientCategories" v-bind:key="ingredientCategory.id">
                         <input class="form-check-input" type="radio" name="categoryOptions" :id="'radio_' + ingredientCategory.id" :value="ingredientCategory.id" v-model="pickedCategory">
                         <label class="form-check-label" :for="'radio_' + ingredientCategory.id">{{ ingredientCategory.name }}</label>
                     </div>
@@ -57,7 +57,7 @@ export default defineComponent({
                     return true;
                 if (this.pickedCategory === 'new' && this.newCategoryName.length === 0)
                     return true;
-                if (this.$store.state.ingredientCategories.find((ic) => ic.name === this.newCategoryName))
+                if (this.$store.getters.getIngredientCategoriesByName(this.newCategoryName).length > 0)
                     return true;
                 return false;
             }

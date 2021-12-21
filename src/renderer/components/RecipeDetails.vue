@@ -45,7 +45,7 @@ export default defineComponent({
         recipeId(rid) {
             if (!rid)
                 return;
-            const recipe = this.$store.state.recipes.find((recipe) => recipe.id === rid);
+            const recipe = this.$store.getters.getRecipeById(rid);
             if (!recipe) {
                 return console.warn("Couldn't select recipe.")
             }

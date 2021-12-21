@@ -45,7 +45,7 @@ export default defineComponent({
                 if (this.event) {
                     if (this.event.extendedProps.recur) {
                         const { eventStart } = recurEventToEvent(this.event);
-                        const selEvent = this.$store.state.events.find((evt) => evt.start === eventStart);
+                        const selEvent = this.$store.getters.getEventByStart(eventStart);
                         if (selEvent) {
                             return selEvent.extendedProps.recipeId;
                         }

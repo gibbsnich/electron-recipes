@@ -16,11 +16,11 @@ export const UnknownIngredientsMixin = {
         closeIngredientsWithoutCategoryModal: async function(selectedIngredientCategory) {
             if (selectedIngredientCategory.name) {
                 await this.$store.dispatch('storeIngredientCategory', selectedIngredientCategory.name);
-                const ingredientCategory = this.$store.state.ingredientCategories.find((ic) => ic.name === selectedIngredientCategory.name);
-                if (!ingredientCategory) {
+                const ingredientCategories = this.$store.getters.getIngredientCategoriesByName(selectedIngredientCategory.name);
+                if (ingredientCategories.length === 0) {
                     console.warn("Cannot find created category!");
                 } else {
-                    selectedIngredientCategory.id = ingredientCategory.id;
+                    selectedIngredientCategory.id = ingredientCategories[0].id;
                 }
             }
             this.$store.dispatch('storeIngredient', {ingredientWithoutCategory: this.ingredientWithoutCategory, ingredientCategoryId: selectedIngredientCategory.id});

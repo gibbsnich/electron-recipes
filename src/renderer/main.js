@@ -39,6 +39,35 @@ const store = createStore({
             ingredients: [],
         }
     },
+    getters: {
+        getIngredientById: (state) => (ingredientId) => {
+            return state.ingredients.find(i => i.id === ingredientId);
+        },
+        getIngredientByIngredient: (state) => (ingredientValue) => {
+            return state.ingredients.find(i => i.ingredient === ingredientValue);
+        },
+        getSortedIngredients: (state) => (categoryId) => {
+            return state.ingredients.filter(i => i.categoryId === categoryId).sort((a, b) => a.ingredient < b.ingredient ? -1 : (b.ingredient < a.ingredient ? 1 : 0));
+        },
+        getIngredientCategoriesByName: (state) => (categoryName) => {
+            return state.ingredientCategories.filter(ic => ic.name === categoryName);
+        },
+        getSortedIngredientCategories (state) {
+            return state.ingredientCategories.sort((a, b) => a.name < b.name ? -1 : (b.name < a.name ? 1 : 0));
+        },
+        getEventByStart: (state) => (eventStart) => {
+            return state.events.find(event => event.start === eventStart);
+        },
+        getIngredientEventByStart: (state) => (ingredientEventStart) => {
+            return state.events.find((e) => e.extendedProps.extra && e.start === ingredientEventStart);
+        },
+        getRecipeById: (state) => (recipeId) => {
+            return state.recipes.find(recipe => recipe.id === recipeId);
+        },
+        getRecipeByUrl: (state) => (recipeUrl) => {
+            return state.recipes.find(recipe => recipe.url === recipeUrl);
+        },
+    },
     mutations: {
         initStore(state, data) {
             state.recipes = data.recipes;

@@ -49,7 +49,7 @@ export const generatePDF = ({start, end}, store) => {
     currentEvents.sort((a, b) => a.start < b.start ? -1 : (b.start < a.start ? 1 : 0)).forEach((e) => {
         const readableDate = dateStringToReadableString(e.start);
         const time = e.start.indexOf('T12:') !== -1 ? 'Mittagessen' : 'Abendessen';
-        const currentRecipe = store.state.recipes.filter((r) => r.id === e.extendedProps.recipeId)[0];
+        const currentRecipe = store.state.getters.getRecipeById(e.extendedProps.recipeId);
         if (currentRecipe) {
             doc.addPage();
             doc.setFontSize('14');
