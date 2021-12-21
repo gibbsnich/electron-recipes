@@ -109,10 +109,12 @@ export default defineComponent({
             const existingNewIngredient = this.$store.getters.getIngredientByIngredient(oldIngredient.ingredient);
             if (existingNewIngredient) {
                 oldIngredient.id = existingNewIngredient.id;
-                oldIngredient.ingredientId = existingNewIngredient.ingredientId;
+                oldIngredient.categoryId = existingNewIngredient.categoryId;
+                oldIngredient.storeId = existingNewIngredient.storeId;
             } else {
                 oldIngredient.id = null;
-                oldIngredient.ingredientId = null;
+                oldIngredient.categoryId = null;
+                oldIngredient.storeId = null;
             }
             this.ingredients[index] = oldIngredient;
         },

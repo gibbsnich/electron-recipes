@@ -45,6 +45,7 @@ import IngredientsList from './IngredientsList.vue';
 
 export default defineComponent({
     name: 'RandomIngredientsModal',
+    emits: ['close'],
     components: {
         IngredientsList,
     },

@@ -36,6 +36,7 @@ const store = createStore({
             recipes: null,
             recipeCategories: [],
             ingredientCategories: [],
+            ingredientStores: [],
             ingredients: [],
         }
     },
@@ -54,6 +55,12 @@ const store = createStore({
         },
         getSortedIngredientCategories (state) {
             return state.ingredientCategories.sort((a, b) => a.name < b.name ? -1 : (b.name < a.name ? 1 : 0));
+        },
+        getIngredientStoresByName: (state) => (storeName) => {
+            return state.ingredientStores.filter(is => is.name === storeName);
+        },
+        getSortedIngredientStores (state) {
+            return state.ingredientStores.sort((a, b) => a.name < b.name ? -1 : (b.name < a.name ? 1 : 0));
         },
         getEventByStart: (state) => (eventStart) => {
             return state.events.find(event => event.start === eventStart);
@@ -91,17 +98,22 @@ const store = createStore({
                 state.recipes[recipeIndex] = recipe;
             }
         },
-        storeIngredient(state, { ingredientWithoutCategory, ingredientCategoryId }) {
+        storeIngredient(state, { ingredientWithoutCategory, ingredientCategoryId, ingredientStoreId }) {
             if (!ingredientWithoutCategory.id) {
                 const newIngredientId = nextId(state.ingredients);
                 ingredientWithoutCategory.id = newIngredientId;
                 ingredientWithoutCategory.categoryId = ingredientCategoryId;
+                ingredientWithoutCategory.storeId = ingredientStoreId;
                 state.ingredients.push(ingredientWithoutCategory);
             }
         },
         storeIngredientCategory(state, ingredientCategoryName) {
             const newIngredientCategoryId = nextId(state.ingredientCategories);
             state.ingredientCategories.push({name: ingredientCategoryName, id: newIngredientCategoryId});
+        },
+        storeIngredientStore(state, ingredientStoreName) {
+            const newIngredientStoreId = nextId(state.ingredientStores);
+            state.ingredientStores.push({name: ingredientStoreName, id: newIngredientStoreId});
         },
         setEvent(state, event) {
             if (event.extendedProps.extra) {
@@ -135,6 +147,7 @@ const store = createStore({
                 events: await ipcRenderer.invoke('readJSON', 'events'), 
                 ingredients: await ipcRenderer.invoke('readJSON', 'ingredients'), 
                 ingredientCategories: await ipcRenderer.invoke('readJSON', 'ingredient_categories'),
+                ingredientStores: await ipcRenderer.invoke('readJSON', 'ingredient_stores'),
             });
         },
         async storeEvent({ commit, state }, event) {
@@ -145,13 +158,17 @@ const store = createStore({
             commit('storeRecipe', recipe);
             await ipcRenderer.invoke('writeJSON', {fileName: 'recipes', data: JSON.stringify(state.recipes)});
         },
-        async storeIngredient({ commit, state }, { ingredientWithoutCategory, ingredientCategoryId }) {
-            commit('storeIngredient', { ingredientWithoutCategory, ingredientCategoryId });
+        async storeIngredient({ commit, state }, { ingredientWithoutCategory, ingredientCategoryId, ingredientStoreId }) {
+            commit('storeIngredient', { ingredientWithoutCategory, ingredientCategoryId, ingredientStoreId });
             await ipcRenderer.invoke('writeJSON', {fileName: 'ingredients', data: JSON.stringify(state.ingredients)});
         },
         async storeIngredientCategory({ commit, state }, ingredientCategoryName) {
             commit('storeIngredientCategory', ingredientCategoryName);
             await ipcRenderer.invoke('writeJSON', {fileName: 'ingredient_categories', data: JSON.stringify(state.ingredientCategories)});
+        },
+        async storeIngredientStore({ commit, state }, ingredientStoreName) {
+            commit('storeIngredientStore', ingredientStoreName);
+            await ipcRenderer.invoke('writeJSON', {fileName: 'ingredient_stores', data: JSON.stringify(state.ingredientStores)});
         },
     }
 });

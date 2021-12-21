@@ -31,6 +31,7 @@ import { recurEventToEvent } from '../util/event';
 
 export default defineComponent({
     name: 'SelectRecipeModal',
+    emits: ['close'],
     props: {
         event: Object,
     },
@@ -61,9 +62,6 @@ export default defineComponent({
         }
     },
     methods: {
-        // selectId(e) {
-        //     this.selectedChoice = e.id
-        // },
         close() {
             this.$emit('close', this.newSelectedChoice === -1 ? null : this.newSelectedChoice);
         },

@@ -13,17 +13,27 @@ export const UnknownIngredientsMixin = {
             }
             return null;
         },
-        closeIngredientsWithoutCategoryModal: async function(selectedIngredientCategory) {
-            if (selectedIngredientCategory.name) {
-                await this.$store.dispatch('storeIngredientCategory', selectedIngredientCategory.name);
-                const ingredientCategories = this.$store.getters.getIngredientCategoriesByName(selectedIngredientCategory.name);
+        closeIngredientsWithoutCategoryModal: async function(selectedCategories) {
+            if (selectedCategories.categoryName) {
+                await this.$store.dispatch('storeIngredientCategory', selectedCategories.categoryName);
+                const ingredientCategories = this.$store.getters.getIngredientCategoriesByName(selectedCategories.categoryName);
                 if (ingredientCategories.length === 0) {
                     console.warn("Cannot find created category!");
                 } else {
-                    selectedIngredientCategory.id = ingredientCategories[0].id;
+                    selectedCategories.categoryId = ingredientCategories[0].id;
                 }
             }
-            this.$store.dispatch('storeIngredient', {ingredientWithoutCategory: this.ingredientWithoutCategory, ingredientCategoryId: selectedIngredientCategory.id});
+            if (selectedCategories.storeName) {
+                await this.$store.dispatch('storeIngredientStore', selectedCategories.storeName);
+                const ingredientStores = this.$store.getters.getIngredientStoresByName(selectedCategories.storeName);
+                if (ingredientStores.length === 0) {
+                    console.warn("Cannot find created store!");
+                } else {
+                    selectedCategories.storeId = ingredientStores[0].id;
+                }
+            }
+
+            this.$store.dispatch('storeIngredient', {ingredientWithoutCategory: this.ingredientWithoutCategory, ingredientCategoryId: selectedCategories.categoryId, ingredientStoreId: selectedCategories.storeId});
             const withoutCategory = this.checkForIngredientsWithoutCategory(this.unknownIngredients);
             if (withoutCategory) {
                 this.ingredientWithoutCategory = withoutCategory;
