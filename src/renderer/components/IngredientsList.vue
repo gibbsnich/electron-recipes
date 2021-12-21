@@ -2,7 +2,7 @@
     <ul class="list-group list-group-flush">
         <li class="list-group-item" v-for="(ingredient, index) in ingredients" v-bind:key="index">
             <div class="input-group">
-                <input type="text"  class="form-control" placeholder="Menge" aria-label="Menge" :value="ingredient.amount">
+                <input type="text"  class="form-control" placeholder="Menge" aria-label="Menge" v-model="ingredient.amount">
                 <div class="dropdown">
                     <input type="text" :id="`dd_${index}`" :class="['form-control', 'dropdown-toggle', {unknown: !ingredient.id}]" placeholder="Zutat" aria-label="Zutat" data-bs-toggle="dropdown" 
                         v-model="ingredient.ingredient" v-on:blur="ingredientChanged(index, $event)" 
@@ -18,7 +18,7 @@
         </li>
         <li class="list-group-item">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Menge" aria-label="Menge" :value="newIngredient.amount">
+                <input type="text" class="form-control" placeholder="Menge" aria-label="Menge" v-model="newIngredient.amount">
                 <div class="dropdown">
                     <input type="text" id="dd_new" :class="['form-control', 'dropdown-toggle', {unknown: !newIngredient.id}]" placeholder="Zutat" aria-label="Zutat" data-bs-toggle="dropdown" 
                         v-model="newIngredient.ingredient" v-on:keyup="maybeShowIngredients(-1, $event)">
@@ -40,7 +40,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
     name: 'IngredientsList',
     props: {
-        ingredients: Array, 
+        ingredients: Array,
     },
     data() {
         return {
@@ -94,7 +94,7 @@ export default defineComponent({
         },
         addIngredient() {
             if (this.newIngredient.ingredient !== '') {
-                if (this.newIngredient.highlight) {
+                if (Object.hasOwnProperty(this.newIngredient, 'highlight')) {
                     delete this.newIngredient.highlight;
                 }
                 this.ingredients.push(this.newIngredient);

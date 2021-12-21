@@ -87,6 +87,7 @@ const store = createStore({
             }
             state.ingredients = data.ingredients;
             state.ingredientCategories = data.ingredientCategories;
+            state.ingredientStores = data.ingredientStores;
         },
         storeRecipe(state, recipe) {
             if (!recipe.id) {
@@ -104,6 +105,9 @@ const store = createStore({
                 ingredientWithoutCategory.id = newIngredientId;
                 ingredientWithoutCategory.categoryId = ingredientCategoryId;
                 ingredientWithoutCategory.storeId = ingredientStoreId;
+                if (Object.hasOwnProperty(ingredientWithoutCategory, 'amount')) {
+                    delete ingredientWithoutCategory.amount;
+                }
                 state.ingredients.push(ingredientWithoutCategory);
             }
         },
