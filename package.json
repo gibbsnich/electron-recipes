@@ -1,6 +1,6 @@
 {
   "name": "electron-recipes",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Manage your cooking recipes with this electron app.",
   "main": "src/main/main.js",
   "scripts": {
