@@ -8,29 +8,27 @@
         </div>
         <div class="modal-body">
             <p>Rezept auswählen:</p>
-            
-                <div class="accordion">
-                    <div class="accordion-item" v-for="recipeCategory in this.$store.getters.getSortedRecipeCategories" v-bind:key="recipeCategory.id">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button type="button" :class="['accordion-button', {collapsed: recipeCategory.id !== expandedCategory}]" @click="toggle(recipeCategory.id)">
-                                    {{ recipeCategory.name }}
-                                </button>
-                            </h2>
-                            <div :class="['accordion-collapse', 'collapse', {show: recipeCategory.id === expandedCategory}]">
-                                <div class="accordion-body">
-                                    <select class="form-select" aria-label="Rezeptauswahl" v-model="this.selectedRecipe">
-                                        <option value="-1">Rezept wählen..</option>
-                                        <option v-for="recipe in this.$store.getters.getSortedRecipes(recipeCategory.id)" :value="recipe.id" v-bind:key="recipe.id">
-                                            {{ recipe.name }}
-                                        </option>
-                                    </select>
-                                </div>
+            <div class="accordion">
+                <div class="accordion-item" v-for="recipeCategory in this.$store.getters.getSortedRecipeCategories" v-bind:key="recipeCategory.id">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button type="button" :class="['accordion-button', {collapsed: recipeCategory.id !== expandedCategory}]" @click="toggle(recipeCategory.id)">
+                                {{ recipeCategory.name }}
+                            </button>
+                        </h2>
+                        <div :class="['accordion-collapse', 'collapse', {show: recipeCategory.id === expandedCategory}]">
+                            <div class="accordion-body">
+                                <select class="form-select" aria-label="Rezeptauswahl" v-model="this.selectedRecipe">
+                                    <option value="-1">Rezept wählen..</option>
+                                    <option v-for="recipe in this.$store.getters.getSortedRecipes(recipeCategory.id)" :value="recipe.id" v-bind:key="recipe.id">
+                                        {{ recipe.name }}
+                                    </option>
+                                </select>
                             </div>
                         </div>
                     </div>
                 </div>
-
+            </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary" @click="close">Speichern</button>
