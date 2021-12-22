@@ -8,14 +8,29 @@
         </div>
         <div class="modal-body">
             <p>Rezept auswählen:</p>
-            <p>
-                <select class="form-select" aria-label="Rezeptauswahl" v-model="this.selectedChoice">
-                    <option value="-1">Rezept wählen..</option>
-                    <option v-for="choice in this.$store.state.recipes" :value="choice.id" v-bind:key="choice.id">
-                        {{ choice.name }}
-                    </option>
-                </select>
-            </p>
+            
+                <div class="accordion">
+                    <div class="accordion-item" v-for="recipeCategory in this.$store.getters.getSortedRecipeCategories" v-bind:key="recipeCategory.id">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button type="button" :class="['accordion-button', {collapsed: recipeCategory.id !== expandedCategory}]" @click="toggle(recipeCategory.id)">
+                                    {{ recipeCategory.name }}
+                                </button>
+                            </h2>
+                            <div :class="['accordion-collapse', 'collapse', {show: recipeCategory.id === expandedCategory}]">
+                                <div class="accordion-body">
+                                    <select class="form-select" aria-label="Rezeptauswahl" v-model="this.selectedRecipe">
+                                        <option value="-1">Rezept wählen..</option>
+                                        <option v-for="recipe in this.$store.getters.getSortedRecipes(recipeCategory.id)" :value="recipe.id" v-bind:key="recipe.id">
+                                            {{ recipe.name }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary" @click="close">Speichern</button>
@@ -37,7 +52,8 @@ export default defineComponent({
     },
     data() {
         return {
-            newSelectedChoice: null,
+            selectedRecipe: null,
+            expandedCategory: -1,
         }
     },
     computed: {
@@ -57,13 +73,20 @@ export default defineComponent({
                 return null;
             },
             set(v) {
-                this.newSelectedChoice = v;
+                this.selectedRecipe = v;
             }
         }
     },
     methods: {
+        toggle(recipeCategoryId) {
+            if (this.expandedCategory === recipeCategoryId) {
+                this.expandedCategory = -1;
+            } else {
+                this.expandedCategory = recipeCategoryId;
+            }
+        },
         close() {
-            this.$emit('close', this.newSelectedChoice === -1 ? null : this.newSelectedChoice);
+            this.$emit('close', this.selectedRecipe === -1 ? null : this.selectedRecipe);
         },
         closeNoSave() {
             this.$emit('close', null);
@@ -71,3 +94,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style scoped>
+    .accordion-button {
+        padding: 0;
+    }
+</style>

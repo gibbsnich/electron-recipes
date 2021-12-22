@@ -14,10 +14,29 @@
         <input type="text" class="form-control" id="name-input" v-model="currentRecipe.serving.type">
         </div>
     </div>
-    <h5>Zutaten:</h5>
-    <ingredients-list :ingredients="this.currentRecipe.ingredients" />
-    <h5 id="prep-label">Zubereitung:</h5>
-    <textarea class="form-control" rows="20" v-model="currentRecipe.preparation" />
+    <div class="row mb-3">
+        <h5>Kategorien:</h5>
+        <div>
+            <button type="button" :class="['btn', 'btn-outline-primary', 'recipe-category-button', {active: currentRecipe.recipeCategories.includes(recipeCategory.id)}]" 
+                v-for="recipeCategory in this.$store.getters.getSortedRecipeCategories" 
+                v-bind:key="recipeCategory.id" @click="toggleRecipeCategory(recipeCategory.id)">
+                {{ recipeCategory.name }}
+            </button>
+        </div>
+        <div>
+            ... oder neu anlegen:
+            <input type="text" placeholder="Neue Kategorie" v-model="newRecipeCategoryName">
+            <button type="button" id="save-recipe-category-button" :class="['btn', 'btn-primary', {disabled: newRecipeCategoryName.length === 0}]" @click="saveNewRecipeCategory">Speichern</button>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <h5>Zutaten:</h5>
+        <ingredients-list :ingredients="this.currentRecipe.ingredients" />
+    </div>
+    <div class="row mb-3">
+        <h5>Zubereitung:</h5>
+        <textarea class="form-control" rows="20" v-model="currentRecipe.preparation" />
+    </div>
     <button id="save-button" type="button" class="btn btn-primary" :disabled="currentRecipe.name === ''" @click="saveRecipe" >Rezept speichern</button>
 </template>
 
@@ -39,6 +58,7 @@ export default defineComponent({
     data() {
       return {
           currentRecipe: this.makeEmptyRecipe(),
+          newRecipeCategoryName: '',
       }
     },
     watch: {
@@ -63,6 +83,20 @@ export default defineComponent({
         },
     },
     methods: {
+        toggleRecipeCategory(recipeCategoryId) {
+            const recipeCategoryIndex = this.currentRecipe.recipeCategories.indexOf(recipeCategoryId);
+            if (recipeCategoryIndex === -1) {
+                this.currentRecipe.recipeCategories.push(recipeCategoryId);
+            } else {
+                this.currentRecipe.recipeCategories.splice(recipeCategoryIndex, 1);
+            }
+        },
+        async saveNewRecipeCategory() {
+            await this.$store.dispatch('storeRecipeCategory', this.newRecipeCategoryName);
+            const recipeCategory = this.$store.getters.getRecipeCategoryByName(this.newRecipeCategoryName);
+            this.currentRecipe.recipeCategories.push(recipeCategory.id);
+            this.newRecipeCategoryName = '';
+        },
         saveRecipe() {
             this.currentRecipe.ingredients = this.currentRecipe.ingredients.filter((i) => i.amount !== '' || i.ingredient !== '');
             this.$emit('save', this.currentRecipe);
@@ -70,13 +104,20 @@ export default defineComponent({
             //this.currentRecipe = this.makeEmptyRecipe();
         },
         makeEmptyRecipe() {
-            return {name: '', serving: {value: '', type: ''}, ingredients: [], preparation: '', url: ''};
+            return {name: '', serving: {value: '', type: ''}, ingredients: [], preparation: '', url: '', recipeCategories: []};
         }
     }
 })
 </script>
 
 <style scoped>
-    #prep-label { margin-top: .5rem; }
-    #save-button { margin-top: .5rem; margin-left: 2rem; margin-bottom: 1rem; }
+    button.recipe-category-button {
+        margin-right: .5rem;
+    }
+    #save-button { 
+        margin-left: 2rem; margin-bottom: 1rem;
+    }
+    #save-recipe-category-button {
+        margin-left: .5rem;
+    }
 </style>

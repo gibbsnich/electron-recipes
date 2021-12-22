@@ -78,10 +78,20 @@ const store = createStore({
         getRecipeByUrl: (state) => (recipeUrl) => {
             return state.recipes.find(recipe => recipe.url === recipeUrl);
         },
+        getSortedRecipes: (state) => (recipeCategoryId) => {
+            return state.recipes.filter(r => r.recipeCategories.includes(recipeCategoryId)).sort((a, b) => a.ingredient < b.ingredient ? -1 : (b.ingredient < a.ingredient ? 1 : 0));
+        },
+        getSortedRecipeCategories (state) {
+            return state.recipeCategories.sort((a, b) => a.name < b.name ? -1 : (b.name < a.name ? 1 : 0));
+        },
+        getRecipeCategoryByName: (state) => (recipeCategoryName) => {
+            return state.recipeCategories.find(recipeCategory => recipeCategory.name === recipeCategoryName);
+        }
     },
     mutations: {
         initStore(state, data) {
             state.recipes = data.recipes;
+            state.recipeCategories = data.recipeCategories;
             if (data.events.length > 0) {
                 state.events = data.events;
             }
@@ -98,6 +108,10 @@ const store = createStore({
                 const recipeIndex = state.recipes.findIndex((r) => r.id === recipe.id);
                 state.recipes[recipeIndex] = recipe;
             }
+        },
+        storeRecipeCategory(state, recipeCategoryName) {
+            const newRecipeCategoryId = nextId(state.recipeCategories);
+            state.recipeCategories.push({name: recipeCategoryName, id: newRecipeCategoryId});
         },
         storeIngredient(state, { ingredientWithoutCategory, ingredientCategoryId, ingredientStoreId }) {
             if (!ingredientWithoutCategory.id) {
@@ -147,9 +161,10 @@ const store = createStore({
     actions: {
         async loadInitialData({ commit }) {
             commit('initStore', {
-                recipes: await ipcRenderer.invoke('readJSON', 'recipes'), 
-                events: await ipcRenderer.invoke('readJSON', 'events'), 
-                ingredients: await ipcRenderer.invoke('readJSON', 'ingredients'), 
+                recipes: await ipcRenderer.invoke('readJSON', 'recipes'),
+                recipeCategories: await ipcRenderer.invoke('readJSON', 'recipe_categories'),
+                events: await ipcRenderer.invoke('readJSON', 'events'),
+                ingredients: await ipcRenderer.invoke('readJSON', 'ingredients'),
                 ingredientCategories: await ipcRenderer.invoke('readJSON', 'ingredient_categories'),
                 ingredientStores: await ipcRenderer.invoke('readJSON', 'ingredient_stores'),
             });
@@ -161,6 +176,10 @@ const store = createStore({
         async storeRecipe({ commit, state }, recipe) {
             commit('storeRecipe', recipe);
             await ipcRenderer.invoke('writeJSON', {fileName: 'recipes', data: JSON.stringify(state.recipes)});
+        },
+        async storeRecipeCategory({ commit, state }, recipeCategoryName) {
+            commit('storeRecipeCategory', recipeCategoryName);
+            await ipcRenderer.invoke('writeJSON', {fileName: 'recipe_categories', data: JSON.stringify(state.recipeCategories)});
         },
         async storeIngredient({ commit, state }, { ingredientWithoutCategory, ingredientCategoryId, ingredientStoreId }) {
             commit('storeIngredient', { ingredientWithoutCategory, ingredientCategoryId, ingredientStoreId });
