@@ -20,8 +20,8 @@
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Menge" aria-label="Menge" v-model="newIngredient.amount">
                 <div class="dropdown">
-                    <input type="text" id="dd_new" :class="['form-control', 'dropdown-toggle', {unknown: !newIngredient.id}]" placeholder="Zutat" aria-label="Zutat" data-bs-toggle="dropdown" 
-                        v-model="newIngredient.ingredient" v-on:keyup="maybeShowIngredients(-1, $event)">
+                    <textarea type="text" id="dd_new" :class="['form-control', 'dropdown-toggle', {unknown: !newIngredient.id}]" placeholder="Zutat" aria-label="Zutat" data-bs-toggle="dropdown" 
+                        v-model="newIngredient.ingredient" v-on:keyup="maybeShowIngredients(-1, $event)" rows="1" />
                     <ul class="dropdown-menu" v-show="newIngredientDropDownIngredients.length > 0">
                         <li v-for="ddingredient in newIngredientDropDownIngredients" v-bind:key="ddingredient.id" aria-labelledby="dd_new">
                             <a class="dropdown-item" href="javascript:void(0)" v-on:click="newIngredient.ingredient = ddingredient.ingredient"><span v-html="ddingredient.highlight"></span></a>
@@ -97,8 +97,20 @@ export default defineComponent({
                 if (Object.hasOwnProperty(this.newIngredient, 'highlight')) {
                     delete this.newIngredient.highlight;
                 }
-                this.ingredients.push(this.newIngredient);
-                this.checkExistingIngredient(this.ingredients.length - 1);
+                if (this.newIngredient.ingredient.indexOf("\n") === -1) {
+                    this.ingredients.push(this.newIngredient);
+                    this.checkExistingIngredient(this.ingredients.length - 1);
+                } else {
+                    const newIngredients = this.newIngredient.ingredient.split("\n").filter(l => l.length > 0).map(l => { 
+                        const lineSplit = l.split(' ');
+                        if (lineSplit.length > 1) {
+                            return {amount: lineSplit[0], ingredient: lineSplit.splice(1, lineSplit.length-1).join(' ')};
+                        }
+                        return {amount: '', ingredient: l};
+                    });
+                    this.ingredients.push.apply(this.ingredients, newIngredients);
+                    newIngredients.forEach((v, i) => this.checkExistingIngredient(this.ingredients.length - i - 1));
+                }
                 this.newIngredient = this.makeEmptyIngredient();
                 this.dropDownIngredients = [];
                 this.newIngredientDropDownIngredients = [];
@@ -131,6 +143,9 @@ export default defineComponent({
 <style scoped>
     input.unknown { 
         border-color: red;
+    }
+    #dd_new {
+        resize: none;
     }
     .dropdown-menu {
         z-index: 1100;
