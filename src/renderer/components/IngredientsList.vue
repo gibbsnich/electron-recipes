@@ -129,6 +129,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-    input.unknown { border-color: red;}
-    .dropdown-menu { z-index: 1100; }
+    input.unknown { 
+        border-color: red;
+    }
+    .dropdown-menu {
+        z-index: 1100;
+    }
+    .dropdown {
+        flex: 1 1 auto;
+    }
 </style>

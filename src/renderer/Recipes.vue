@@ -108,5 +108,7 @@ export default defineComponent({
 
 <style scoped src='@fullcalendar/common/main.css'></style>
 <style scoped>
-#action-group {margin-top: 1rem;}
+#action-group {
+    margin-top: 1rem;
+}
 </style>
