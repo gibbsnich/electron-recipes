@@ -12,26 +12,14 @@
                     </div>
                     <div v-else>
                         <p>Zutaten auswählen:</p>
-                        <div class="accordion">
-                            <div class="accordion-item" v-for="ingredientCategory in this.$store.getters.getSortedIngredientCategories" v-bind:key="ingredientCategory.id">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button type="button" :class="['accordion-button', {collapsed: ingredientCategory.id !== expandedCategory}]" @click="toggle(ingredientCategory.id)">
-                                            {{ ingredientCategory.name }}
-                                        </button>
-                                    </h2>
-                                    <div :class="['accordion-collapse', 'collapse', {show: ingredientCategory.id === expandedCategory}]">
-                                        <div class="accordion-body">
-                                            <button type="button" class="btn btn-outline-primary btn-ing"
-                                                @click="addIngredientById(ingredient.id)"
-                                                v-for="ingredient in this.$store.getters.getSortedIngredients(ingredientCategory.id)" v-bind:key="ingredient.id">
-                                                {{ ingredient.ingredient }}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <accordion v-bind:categories="this.$store.getters.getSortedIngredientCategories" v-bind:categoryItemsGetter="getIngredients"
+                            @itemSelected="addIngredientById" v-slot:default="slotProps">
+                                <button type="button" class="btn btn-outline-primary btn-ing"
+                                    @click="this.addIngredientById(item.id)"
+                                    v-for="item in this.getIngredients(slotProps.category.id)" v-bind:key="item.id">
+                                    {{ item.ingredient }}
+                                </button>
+                        </accordion>
                         <p>Gewählte Zutaten:</p>
                         <ingredients-list :ingredients="this.ingredients" />
                     </div>
@@ -47,19 +35,20 @@
 <script>
 import { defineComponent } from 'vue';
 import IngredientsList from './IngredientsList.vue';
+import Accordion from './Accordion.vue';
 
 export default defineComponent({
     name: 'RandomIngredientsModal',
     emits: ['close'],
     components: {
         IngredientsList,
+        Accordion,
     },
     props: {
         date: String,
     },
     data() {
         return {
-            expandedCategory: -1,
             ingredientsArray: [],
         }
     },
@@ -77,6 +66,9 @@ export default defineComponent({
         }
     },
     methods: {
+        getIngredients(ingredientCategoryId) {
+            return this.$store.getters.getSortedIngredients(ingredientCategoryId);
+        },
         close() {
             const nonEmptyIngredients = this.ingredients.filter((i) => i.amount !== '' || i.ingredient !== '');
             if (nonEmptyIngredients.length > 0) {
@@ -96,13 +88,6 @@ export default defineComponent({
         closeNoSave() {
             this.ingredientsArray = [];
             this.$emit('close', null);
-        },
-        toggle(ingredientCategoryId) {
-            if (this.expandedCategory === ingredientCategoryId) {
-                this.expandedCategory = -1;
-            } else {
-                this.expandedCategory = ingredientCategoryId;
-            }
         },
         addIngredientById(ingredientId) {
             const selIngredient = this.$store.getters.getIngredientById(ingredientId);

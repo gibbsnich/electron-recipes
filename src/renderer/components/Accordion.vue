@@ -9,12 +9,14 @@
                 </h2>
                 <div :class="['accordion-collapse', 'collapse', {show: category.id === expandedCategoryId}]">
                     <div class="accordion-body">
-                        <select class="form-select" aria-label="Rezeptauswahl" @change="itemSelected">
-                            <option value="-1">Rezept wählen..</option>
-                            <option v-for="item in categoryItemsGetter(category.id)" :value="item.id" v-bind:key="item.id">
-                                {{ item.name }}
-                            </option>
-                        </select>
+                        <slot :category="category">
+                            <select class="form-select" aria-label="Rezeptauswahl" @change="itemSelected">
+                                <option value="-1">Rezept wählen..</option>
+                                <option v-for="item in categoryItemsGetter(category.id)" :value="item.id" v-bind:key="item.id">
+                                    {{ item.name }}
+                                </option>
+                            </select>
+                        </slot>
                     </div>
                 </div>
             </div>
