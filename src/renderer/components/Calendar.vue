@@ -1,6 +1,6 @@
 <template>
-    <select-recipe-modal v-show="isSelectRecipeModalVisible" @close="closeSelectRecipeModal" v-bind:event="selectRecipeModalEventInfo" />
-    <random-ingredients-modal v-show="isRandomIngredientsModalVisible" @close="closeRandomIngredientsModal" v-bind:date="randomIngredientsDate" />
+    <select-recipe-modal :key="selectRecipeKey" v-show="isSelectRecipeModalVisible" @close="closeSelectRecipeModal" v-bind:event="selectRecipeModalEventInfo" />
+    <random-ingredients-modal :key="randomIngredientKey" v-show="isRandomIngredientsModalVisible" @close="closeRandomIngredientsModal" v-bind:date="randomIngredientsDate" />
     <ingredient-without-category-modal v-show="isIngredientWithoutCategoryModalVisible" @close="closeIngredientsWithoutCategoryModal" v-bind:ingredient="ingredientWithoutCategory" />
     <FullCalendar :options="{...calendarOptions, events: this.$store.state.events}"  />
 </template>
@@ -63,8 +63,10 @@ export default defineComponent({
                 select: this.handleSelect,
                 dateClick: this.handleDateClick,
             },
+            selectRecipeKey: 1,
             isSelectRecipeModalVisible: false,
             selectRecipeModalEventInfo: null,
+            randomIngredientKey: 1,
             isRandomIngredientsModalVisible: false,
             randomIngredientsDate: null,
             newIngredientsEvent: null,
@@ -80,6 +82,7 @@ export default defineComponent({
                 this.randomIngredientsDate = dateToString(info.event.start)
                 this.isRandomIngredientsModalVisible = true;
             } else {
+                this.selectRecipeKey += 1;
                 this.selectRecipeModalEventInfo = info.event;
                 this.isSelectRecipeModalVisible = true;
             }
@@ -94,6 +97,7 @@ export default defineComponent({
         },
         handleDateClick(info) {
             this.randomIngredientsDate = dateToString(info.date);
+            this.randomIngredientKey += 1;
             this.isRandomIngredientsModalVisible = true;
         },
         closeRandomIngredientsModal(ingredientsEvent) {
