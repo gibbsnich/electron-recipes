@@ -128,28 +128,27 @@ export const store = createStore({
             const newIngredientStoreId = nextId(state.ingredientStores);
             state.ingredientStores.push({name: ingredientStoreName, id: newIngredientStoreId});
         },
-        setEvent(state, event) {
-            if (event.extendedProps.extra) {
-                const ingredientsEvent = state.events.find((e) => e.extendedProps.extra && e.start === event.start);
-                if (ingredientsEvent) {
-                    ingredientsEvent.extendedProps.ingredients = event.extendedProps.ingredients;
-                } else {
-                    state.events.push(event);
-                }
+        storeEvent(state, event) {
+            const ingredientsEvent = state.events.find((e) => e.extendedProps.extra && e.start === event.start);
+            if (ingredientsEvent) {
+                ingredientsEvent.extendedProps.ingredients = event.extendedProps.ingredients;
             } else {
-                const recipe = state.recipes.find((r) => r.id === event.recipeId);
-                if (!recipe)
-                    return;
-                const { eventStart, eventEnd } = event.extendedProps.recur ? 
-                    recurEventToEvent(event) : [null, null];
-                const startISO = eventStart ? eventStart : dateToTimeString(event.start);
-                const selEvent = state.events.find((evt) => evt.start === startISO);
-                if (!selEvent) {
-                    state.events.push({title: recipe.name, start: eventStart, end: eventEnd, color: 'red', extendedProps: {recipeId: recipe.id}});
-                } else {
-                    selEvent.title = recipe.name;
-                    selEvent.extendedProps.recipeId = recipe.id;
-                }
+                state.events.push(event);
+            }
+        },
+        storeRecipeEvent(state, event) {
+            const recipe = state.recipes.find((r) => r.id === event.recipeId);
+            if (!recipe)
+                return;
+            const { eventStart, eventEnd } = event.extendedProps.recur ? 
+                recurEventToEvent(event) : [null, null];
+            const startISO = eventStart ? eventStart : dateToTimeString(event.start);
+            const selEvent = state.events.find((evt) => evt.start === startISO);
+            if (!selEvent) {
+                state.events.push({title: recipe.name, start: eventStart, end: eventEnd, color: 'red', extendedProps: {recipeId: recipe.id}});
+            } else {
+                selEvent.title = recipe.name;
+                selEvent.extendedProps.recipeId = recipe.id;
             }
         }
     },
@@ -164,8 +163,12 @@ export const store = createStore({
                 ingredientStores: await ipcRenderer.invoke('readJSON', 'ingredient_stores'),
             });
         },
+        async storeRecipeEvent({ commit, state }, event) {
+            commit('storeRecipeEvent', event);
+            await ipcRenderer.invoke('writeJSON', {fileName: 'events', data: JSON.stringify(state.events)});
+        },
         async storeEvent({ commit, state }, event) {
-            commit('setEvent', event);
+            commit('storeEvent', event);
             await ipcRenderer.invoke('writeJSON', {fileName: 'events', data: JSON.stringify(state.events)});
         },
         async storeRecipe({ commit, state }, recipe) {

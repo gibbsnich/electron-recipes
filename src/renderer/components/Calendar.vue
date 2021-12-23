@@ -91,7 +91,7 @@ export default defineComponent({
             this.isSelectRecipeModalVisible = false;
             if (selectedRecipe) {
                 this.selectRecipeModalEventInfo.recipeId = selectedRecipe;
-                this.$store.dispatch('storeEvent', this.selectRecipeModalEventInfo);
+                this.$store.dispatch('storeRecipeEvent', this.selectRecipeModalEventInfo);
             }
             this.selectRecipeModalEventInfo = null;
         },
