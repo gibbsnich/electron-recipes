@@ -77,13 +77,9 @@ export default defineComponent({
             get() {
                 if (!this.pickedCategory || !this.pickedStore)
                     return true;
-                if (this.pickedCategory === 'new' && this.newCategoryName.length === 0)
+                if (this.pickedCategory === 'new' && (this.newCategoryName.length === 0 || this.$store.getters.getIngredientCategoriesByName(this.newCategoryName).length > 0))
                     return true;
-                if (this.pickedStore === 'new' && this.newStoreName.length === 0)
-                    return true;
-                if (this.$store.getters.getIngredientCategoriesByName(this.newCategoryName).length > 0)
-                    return true;
-                if (this.$store.getters.getIngredientStoresByName(this.newStoreName).length > 0)
+                if (this.pickedStore === 'new' && (this.newStoreName.length === 0 || this.$store.getters.getIngredientStoresByName(this.newStoreName).length > 0))
                     return true;
                 return false;
             }
