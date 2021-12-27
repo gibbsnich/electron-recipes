@@ -13,7 +13,9 @@
                         </li>
                     </ul>
                 </div>
-                <button type="button" class="btn btn-danger btn-sm" aria-label="Close" @click="deleteIngredient(index)">[X]</button>
+                <button type="button" class="btn btn-danger btn-sm" aria-label="Close" @click="deleteIngredient(index)">
+                    <font-awesome-icon icon="minus-square" />
+                </button>
             </div>
         </li>
         <li class="list-group-item">
@@ -28,7 +30,9 @@
                         </li>
                     </ul>
                 </div>
-                <button type="button" class="btn btn-success btn-sm" aria-label="Close" @click="addIngredient()">[N]</button>
+                <button type="button" class="btn btn-success btn-sm" aria-label="Close" @click="addIngredient()">
+                    <font-awesome-icon icon="plus-square" />
+                </button>
             </div>
         </li>
     </ul>

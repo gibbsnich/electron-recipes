@@ -1,38 +1,29 @@
 <template>
     <ingredient-without-category-modal v-show="isIngredientWithoutCategoryModalVisible" @close="closeIngredientsWithoutCategoryModal" v-bind:ingredient="ingredientWithoutCategory" />
-    <div class='fc fc-media-screen fc-direction-ltr fc-theme-standard'>
-        <div class='fc-header-toolbar fc-toolbar fc-toolbar-ltr'>
-            <div class='fc-toolbar-chunk'>
-                <div class='fc-button-group'>
-                    <button @click="gotoCalendar" type="button" class='fc-button fc-button-primary'>Kalender</button>
+    <settings-menu activeTab="recipes" />
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <h6>Vorhandene Rezepte:</h6>
+                <div class="list-group">
+                    <button type="button" v-for="recipe in this.$store.state.recipes" v-bind:key="recipe.id" 
+                            :class="['list-group-item', 'list-group-item-action', {active: recipeId === recipe.id}]"
+                            @click="selectRecipe(recipe.id)">{{ recipe.name }}</button>
                 </div>
+                <ul class="list-group" id="action-group">
+                    <li class="list-group-item">
+                        <button type="button" class="btn btn-primary" @click="addRecipe" >Rezept anlegen</button>
+                    </li>
+                    <li class="list-group-item">
+                        <button type="button" :class="['btn', 'btn-primary', {active: showImporter}]" @click="importRecipe" >Rezept importieren</button>
+                        <div v-show="showImporter">
+                            <RecipeImporter @recipe-imported="recipeImported" />
+                        </div>
+                    </li>
+                </ul>
             </div>
-        </div>
-
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-3">
-                    <h6>Vorhandene Rezepte:</h6>
-                    <div class="list-group">
-                        <button type="button" v-for="recipe in this.$store.state.recipes" v-bind:key="recipe.id" 
-                                :class="['list-group-item', 'list-group-item-action', {active: recipeId === recipe.id}]"
-                                @click="selectRecipe(recipe.id)">{{ recipe.name }}</button>
-                    </div>
-                    <ul class="list-group" id="action-group">
-                        <li class="list-group-item">
-                            <button type="button" class="btn btn-primary" @click="addRecipe" >Rezept anlegen</button>
-                        </li>
-                        <li class="list-group-item">
-                            <button type="button" :class="['btn', 'btn-primary', {active: showImporter}]" @click="importRecipe" >Rezept importieren</button>
-                            <div v-show="showImporter">
-                                <RecipeImporter @recipe-imported="recipeImported" />
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-sm-9">
-                    <RecipeDetails :recipeId=recipeId :recipeData=recipeData :clearRecipe=clearRecipe @save="recipeSaved" />
-                </div>
+            <div class="col-sm-9">
+                <RecipeDetails :recipeId=recipeId :recipeData=recipeData :clearRecipe=clearRecipe @save="recipeSaved" />
             </div>
         </div>
     </div>
@@ -44,14 +35,15 @@ import RecipeDetails from './components/RecipeDetails.vue';
 import RecipeImporter from './components/RecipeImporter.vue';
 import { UnknownIngredientsMixin } from './components/UnknownIngredientsMixin.js';
 import IngredientWithoutCategoryModal from './components/IngredientWithoutCategoryModal.vue';
+import SettingsMenu from './components/SettingsMenu.vue';
 
 export default defineComponent({
-  components: [ RecipeDetails ],
   name: 'recipes',
   components: {
     RecipeDetails,
     RecipeImporter,
     IngredientWithoutCategoryModal,
+    SettingsMenu,
   },
   mixins: [UnknownIngredientsMixin],
   data() {
@@ -64,9 +56,6 @@ export default defineComponent({
       }
   },
   methods: {
-      gotoCalendar() {
-          this.$router.push('/');
-      },
       addRecipe() {
           this.clearRecipe = true;
           this.recipeId = null;

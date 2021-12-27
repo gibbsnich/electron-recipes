@@ -67,7 +67,7 @@ export default defineComponent({
     },
     methods: {
         getIngredients(ingredientCategoryId) {
-            return this.$store.getters.getSortedIngredients(ingredientCategoryId);
+            return this.$store.getters.getSortedIngredientsByCategory(ingredientCategoryId);
         },
         close() {
             const nonEmptyIngredients = this.ingredients.filter((i) => i.amount !== '' || i.ingredient !== '');
