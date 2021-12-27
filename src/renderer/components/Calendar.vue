@@ -123,3 +123,13 @@ export default defineComponent({
     }
 });
 </script>
+
+<style>
+    a { 
+        color: #000;
+        text-decoration: none;
+    }
+    a:hover {
+        color: #000;
+    }
+</style>
