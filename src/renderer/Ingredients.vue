@@ -53,21 +53,20 @@ export default defineComponent({
   data() {
       return {
           ingredients: [],
-          categories: [],
-          stores: [],
           originalIngredients: [],
           dirty: [],
       }
   },
-  mounted () {
+  mounted() {
       this.ingredients = JSON.parse(JSON.stringify(this.$store.getters.getSortedIngredients));
       this.originalIngredients = JSON.parse(JSON.stringify(this.$store.getters.getSortedIngredients));
+      this.dirty = [];
   },
   methods: {
       updateDirty(index) {
           const curIngredient = this.ingredients[index];
           const nameExists = !this.originalIngredients.find(oi => oi.id !== curIngredient.id && oi.ingredient === curIngredient.ingredient);
-          this.dirty[index] = nameExists && (curIngredient.ingredient !== this.originalIngredients[index].ingredient ||
+          this.dirty[index] = nameExists && curIngredient.ingredient.length > 0 && (curIngredient.ingredient !== this.originalIngredients[index].ingredient ||
               curIngredient.categoryId !== this.originalIngredients[index].categoryId ||
               curIngredient.storeId !== this.originalIngredients[index].storeId);
       },
